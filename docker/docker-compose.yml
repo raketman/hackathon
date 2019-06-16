@@ -1,0 +1,49 @@
+# Версия docker-compose
+version: '3'
+# Список наших сервисов (контейнеров)
+services:
+    hakaton-composer:
+        restart: 'no'
+        image: composer:latest
+        command: install --ignore-platform-reqs -o
+        volumes:
+            - ./..:/app:rw
+    hakaton-nginx:
+        container_name: hakaton-nginx
+        # используем последний стабильный образ nginx
+        image: nginx:stable-alpine
+        environment:
+            APP_URI_PREFIX: ''
+        # маршрутизируем порты
+        ports:
+            - "80:80"
+#            - "443:443"
+        # монтируем директории, слева директории на основной машине, справа - куда они монтируются в контейнере
+        volumes:
+            - ./hosts:/etc/nginx/conf.d
+            - ./..:/var/www/hakaton
+            - ./logs:/var/log/nginx
+        # nginx должен общаться с php контейнером
+        links:
+            - hakaton-php
+    hakaton-php:
+        container_name: hakaton-php
+        # у нас свой образ для PHP, указываем путь к нему и говорим что его надо собрать
+        build: ./images/php
+        # этот образ будет общаться с mysql
+        # монтируем директорию с проектами
+        volumes:
+            - ./..:/var/www/hakaton:rw
+            #исключим вендоры из расшаренной папки
+            #- /var/www/hakaton/vendor/
+        #links:
+          #- hakaton-memcached
+        # Дописываем экстра хосты, которые не видны из контейнера, в моем случаем это были следующие
+        extra_hosts:
+            - "mysql:192.168.99.1"
+
+#    hakaton-memcached:
+#        container_name: hakaton-memcached
+#        image: memcached
+#        ports:
+#            - 11211:11211
