@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y git zip curl wget \
     && docker-php-ext-configure mysqli --with-mysqli=mysqlnd \
     && docker-php-ext-install mysqli pdo pdo_mysql opcache
 
+
+
 # mcrypt
 #RUN apt-get update && \
 #    apt-get install -y libmcrypt-dev
@@ -29,14 +31,14 @@ RUN apt-get update && apt-get install -y git zip curl wget \
 #    && pecl install memcache \
 #    && docker-php-ext-enable memcache
 
-#RUN apt-get update \
-#  && apt-get install -y libmemcached11 libmemcachedutil2 build-essential libmemcached-dev libz-dev \
-#  && pecl install memcached-2.2.0 \
-#  && echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini \
-#  && apt-get remove -y build-essential libmemcached-dev libz-dev \
-#  && apt-get autoremove -y \
-#  && apt-get clean \
-#  && rm -rf /tmp/pear
+RUN apt-get update \
+  && apt-get install -y libmemcached11 libmemcachedutil2 build-essential libmemcached-dev libz-dev \
+  && pecl install memcached \
+  && echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini \
+  && apt-get remove -y build-essential libmemcached-dev libz-dev \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /tmp/pear
 
 # Для dev
 RUN apt-get update \
@@ -48,19 +50,25 @@ RUN apt-get update \
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Добавим vendor-dir прямо тут , типо для винды
-#ADD composer.json /var/www/mfc
-#- в папку /var/www/mfc надо
-#ADD composer.lock /var/www/mfc
-#RUN  composer install
-
-# Добавим свой php.ini, можем в нем определять свои значения конфига
-ADD php.ini /usr/local/etc/php/conf.d/hakaton.ini
-
 # Указываем рабочую директорию для PHP
 WORKDIR /var/www/hakaton
+
+COPY composer.json composer.json
+COPY composer.lock composer.lock
+RUN  composer install --ignore-platform-reqs
+
+# Добавим свой php.ini, можем в нем определять свои значения конфига
+ADD docker/images/php/php.ini /usr/local/etc/php/conf.d/hakaton.ini
+
+
+
+# TODO разобраться как доставить обновлегние по вендорам жля винды
+#RUN composer install --ignore-platform-reqs
+# Запустим обновление композераs
+#CMD ["php composer.phar install --ignore-platform-reqs"]
 
 # Запускаем контейнер
 # Из документации: The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable,
 # or they can omit the executable, in which case you must specify an ENTRYPOINT instruction as well.
 CMD ["php-fpm"]
+#CMD ["composer install --ignore-platform-reqs"]
