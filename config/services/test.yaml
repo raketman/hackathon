@@ -1,0 +1,22 @@
+services:
+    app.test.serivce1:
+        class: App\Test\Service1
+        tags:
+            - {name: 'App\Test\IService', version: 1 }
+            - {name: 'App\Test\IService', version: 3 }
+
+
+    app.test.serivce2:
+        class: App\Test\Service2
+        tags:
+            - {name: 'App\Test\IService', version: 2 }
+
+
+    App\Test\IService:
+        public: true
+        shared: false
+        class: App\Test\IService
+        tags:
+            - {name: 'raketman.version.factory', resolver: 'App\Test\Resolver'}
+
+    App\Test\Resolver:

@@ -15,4 +15,6 @@ return [
     Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],
     Symfony\Bundle\WebServerBundle\WebServerBundle::class => ['dev' => true],
     OldSound\RabbitMqBundle\OldSoundRabbitMqBundle::class => ['all' => true],
+    Raketman\Bundle\MonologInjectionBundle\MonologInjectionBundle::class => ['all' => true],
+    Raketman\Bundle\ServiceVersioningBundle\ServiceVersioningBundle::class => ['all' => true],
 ];
