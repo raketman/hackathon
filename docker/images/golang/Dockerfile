@@ -5,9 +5,7 @@ FROM golang:latest
 WORKDIR /go/src/app
 
 RUN go get github.com/gorilla/websocket
-# go dep
-RUN ls -lh
-# add source code
+RUN go get github.com/streadway/amqp
 
 # run main.go
 CMD ["go", "run", "main.go"]

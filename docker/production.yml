@@ -2,13 +2,20 @@
 version: '3'
 # Список наших сервисов (контейнеров)
 services:
-
+#    hakaton-composer:
+#        restart: 'no'
+#        image: composer:latest
+#        command: install --ignore-platform-reqs -o
+#        volumes:
+#            - ./..:/var/www/hakaton:rw
     hakaton-nginx:
         container_name: hakaton-nginx
         # используем последний стабильный образ nginx
         image: nginx:stable
 
         restart: unless-stopped
+        environment:
+            APP_URI_PREFIX: ''
         # маршрутизируем порты
         ports:
             - "80:80"
@@ -43,9 +50,8 @@ services:
           #- hakaton-elastic
           - hakaton-redis
           - hakaton-rabbitmq
-        environment:
-            XDEBUG_CONFIG: "remote_host=host.docker.internal remote_enable=1"
-            PHP_IDE_CONFIG: "serverName=Docker"
+        extra_hosts:
+          - "deb.debian.org:128.31.0.62"
 
     hakaton-redis:
         restart: unless-stopped
@@ -70,6 +76,16 @@ services:
             RABBITMQ_DEFAULT_PASS: rabbitmq
             RABBITMQ_DEFAULT_VHOST: /
 
+#    hakaton-elastic:
+#        restart: unless-stopped
+#
+#        container_name: hakaton-elastic
+#        image: elasticsearch:7.2.0
+#        volumes:
+#            - ./volumes/elastic:/usr/share/elasticsearch/data
+#        ports:
+#            - "9200:9200"
+
     hakaton-golang:
         #restart: unless-stopped
 
@@ -82,3 +98,5 @@ services:
         #command: go run main.go
         links:
             - hakaton-redis
+        ports:
+            - "81:80"

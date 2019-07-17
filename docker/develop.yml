@@ -2,17 +2,24 @@
 version: '3'
 # Список наших сервисов (контейнеров)
 services:
-
+    #    hakaton-composer:
+    #        restart: 'no'
+    #        image: composer:latest
+    #        command: install --ignore-platform-reqs -o
+    #        volumes:
+    #            - ./..:/var/www/hakaton:rw
     hakaton-nginx:
         container_name: hakaton-nginx
         # используем последний стабильный образ nginx
         image: nginx:stable
 
         restart: unless-stopped
+        environment:
+            APP_URI_PREFIX: ''
         # маршрутизируем порты
         ports:
             - "80:80"
-#            - "443:443"
+        #            - "443:443"
         # монтируем директории, слева директории на основной машине, справа - куда они монтируются в контейнере
         volumes:
             - ./hosts:/etc/nginx/conf.d
@@ -21,6 +28,8 @@ services:
         # nginx должен общаться с php контейнером
         links:
             - hakaton-php
+#        networks:
+#            - internal
 
     hakaton-php:
         container_name: hakaton-php
@@ -40,18 +49,26 @@ services:
             #исключим вендоры из расшаренной папки (сделао для исключения виндусятников, т.к там тормозит файловая система)
             - /var/www/hakaton/vendor/
         links:
-          #- hakaton-elastic
-          - hakaton-redis
-          - hakaton-rabbitmq
+            #- hakaton-elastic
+            - hakaton-redis
+            - hakaton-rabbitmq
+        extra_hosts:
+            - "deb.debian.org:128.31.0.62"
+#            - "github.com:140.82.118.4"
+#            - "api.github.com:140.82.118.5"
         environment:
             XDEBUG_CONFIG: "remote_host=host.docker.internal remote_enable=1"
             PHP_IDE_CONFIG: "serverName=Docker"
+#        networks:
+#            - internal
 
     hakaton-redis:
         restart: unless-stopped
 
         container_name: hakaton-redis
         image: redis:5.0.5
+#        networks:
+#            - internal
 
     hakaton-rabbitmq:
         restart: unless-stopped
@@ -69,6 +86,18 @@ services:
             RABBITMQ_DEFAULT_USER: rabbitmq
             RABBITMQ_DEFAULT_PASS: rabbitmq
             RABBITMQ_DEFAULT_VHOST: /
+#        networks:
+#            - internal
+
+    #    hakaton-elastic:
+    #        restart: unless-stopped
+    #
+    #        container_name: hakaton-elastic
+    #        image: elasticsearch:7.2.0
+    #        volumes:
+    #            - ./volumes/elastic:/usr/share/elasticsearch/data
+    #        ports:
+    #            - "9200:9200"
 
     hakaton-golang:
         #restart: unless-stopped
@@ -82,3 +111,14 @@ services:
         #command: go run main.go
         links:
             - hakaton-redis
+        ports:
+            - "81:80"
+#        networks:
+##            - internal
+#networks:
+#    internal:
+#        driver: bridge
+#        ipam:
+#            driver: default
+#            config:
+#                -   subnet: 192.168.220.0/28

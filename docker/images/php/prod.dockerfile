@@ -22,16 +22,6 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /tmp/pear
 
-# Для dev
-RUN apt-get update \
-    && apt-get install -y iputils-ping \
-    && apt-get install -y telnet \
-    && apt-get install -y htop \
-    && apt-get install -y vim
-
-RUN apt-get update && apt-get install -y wget git unzip \
-    && pecl install xdebug-2.7.1 \
-    && docker-php-ext-enable xdebug
 
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -45,8 +35,7 @@ COPY composer.lock composer.lock
 RUN  composer install --ignore-platform-reqs
 
 # Добавим свой php.ini, можем в нем определять свои значения конфига
-ADD docker/images/php/ini/php.ini /usr/local/etc/php/conf.d/hakaton.ini
-ADD docker/images/php/ini/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+ADD docker/images/php/php.ini /usr/local/etc/php/conf.d/hakaton.ini
 
 # Запускаем контейнер
 # Из документации: The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable,
