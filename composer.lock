@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6307b55d7e5e98393a42d92cbd0683ec",
+    "content-hash": "668a3cd6fde3c53cee92d0bcb7f2c4de",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2050,6 +2050,90 @@
                 "psr-3"
             ],
             "time": "2018-11-20T15:27:04+00:00"
+        },
+        {
+            "name": "raketman/monolog-injection-bundle",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/raketman/monolog-injection-bundle.git",
+                "reference": "54339b79b792a8fcc993f097faf1b39a0987f6f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/raketman/monolog-injection-bundle/zipball/54339b79b792a8fcc993f097faf1b39a0987f6f4",
+                "reference": "54339b79b792a8fcc993f097faf1b39a0987f6f4",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/annotations": "~1.0",
+                "php": ">=5.3.0",
+                "symfony/finder": "~2.2|~3.0|~4.0",
+                "symfony/monolog-bundle": "~2.0|~3.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Raketman\\Bundle\\MonologInjectionBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Raketman",
+                    "email": "raketmandevelop@gmail.com"
+                }
+            ],
+            "description": "Easy monolog injection into your classes",
+            "keywords": [
+                "debug",
+                "monolog"
+            ],
+            "time": "2019-07-12T21:56:04+00:00"
+        },
+        {
+            "name": "raketman/service-versioning-bundle",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/raketman/service-versioning-bundle.git",
+                "reference": "002e1309caa3112ce28c8051eab924fba1991806"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/raketman/service-versioning-bundle/zipball/002e1309caa3112ce28c8051eab924fba1991806",
+                "reference": "002e1309caa3112ce28c8051eab924fba1991806",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.5"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Raketman\\Bundle\\ServiceVersioningBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Raketman",
+                    "email": "raketmandevelop@gmail.com"
+                }
+            ],
+            "description": "Easy versioning your services",
+            "keywords": [
+                "service",
+                "version",
+                "versioning"
+            ],
+            "time": "2019-07-12T23:29:48+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",
