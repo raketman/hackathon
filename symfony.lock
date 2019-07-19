@@ -1,4 +1,7 @@
 {
+    "beberlei/assert": {
+        "version": "v2.9.9"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -126,6 +129,9 @@
             "config/packages/old_sound_rabbit_mq.yaml",
             "src/Consumer/.gitignore"
         ]
+    },
+    "php-vcr/php-vcr": {
+        "version": "1.4.4"
     },
     "phpdocumentor/reflection-common": {
         "version": "1.0.1"

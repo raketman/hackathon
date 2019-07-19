@@ -35,13 +35,18 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/profiler-pack": "*",
         "symfony/test-pack": "*",
-        "symfony/web-server-bundle": "4.3.*"
+        "symfony/web-server-bundle": "4.3.*",
+        "php-vcr/php-vcr": "1.4.4"
     },
     "config": {
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "secure-http":false,
+        "platform": {
+            "php": "7.3.6"
+        }
     },
     "autoload": {
         "psr-4": {
