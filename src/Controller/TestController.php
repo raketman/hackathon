@@ -36,4 +36,39 @@ class TestController extends Controller
 
     }
 
+    /**
+     * @return Response
+     * @throws \Exception
+     *
+     * @Route(
+     *     "/test/testvcr/publish",
+     * )
+     */
+    public function testvcr(Request $request)
+    {
+        \VCR\VCR::configure()->setStorage('json');
+        \VCR\VCR::configure()->enableLibraryHooks(array('stream_wrapper', 'curl'));
+        \VCR\VCR::configure()->setCassettePath($this->getParameter('kernel.project_dir'). '/cassete');
+
+        // After turning on the VCR will intercept all requests
+        \VCR\VCR::turnOn();
+
+        // Record requests and responses in cassette file 'example'
+        \VCR\VCR::insertCassette('v132188');
+
+        // Following request will be recorded once and replayed in future test runs
+        $result = file_get_contents('http://v132188.hosted-by-vdsina.ru/proxy/api/v1/catalogs/12/records?filters[0][fieldId]=4&filters[0][value]=79196396602');
+
+        var_dump($result);
+
+        // To stop recording requests, eject the cassette
+        \VCR\VCR::eject();
+
+        // Turn off VCR to stop intercepting requests
+        \VCR\VCR::turnOff();
+
+        exit;
+
+    }
+
 }

@@ -1,9 +1,9 @@
 <?php
 namespace App\Test;
 
-use Raketman\Bundle\ServiceVersioningBundle\Resolver\IVersion;
+use Raketman\Bundle\ServiceVersioningBundle\Resolver\VersionResolverInterface;
 
-class Resolver implements IVersion
+class Resolver implements VersionResolverInterface
 {
     protected $version;
 
