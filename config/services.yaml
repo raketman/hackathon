@@ -34,3 +34,41 @@ services:
             $host: '%env(resolve:BPIUM_HOST)%'
             $user: '%env(resolve:BPIUM_USER)%'
             $password: '%env(resolve:BPIUM_PASS)%'
+
+
+    App\Command\StartServerCommand:
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - 'console.command'
+
+    #  Команды, который надо сконфигурировать, описать в README
+
+    raketman.async.command.http:
+        class: App\Command\HttpServerCommand
+        calls:
+            - ['setLogger', ['@logger']]
+            - ['setHandler', ['@raketman.async.handler.symfony4_http']]
+        tags:
+            - 'console.command'
+
+    raketman.async.command.websocket:
+        class: App\Command\WebsocketServerCommand
+        calls:
+            - ['setLogger', ['@logger']]
+            - ['setHandler', ['@raketman.async.handler.symfony4_websocket']]
+        tags:
+            - 'console.command'
+
+    # бандл
+
+    # сделать фабрику, которая по тэгу будет сеттить setHandler нужный обработчик
+
+    raketman.async.handler.symfony4_http:
+        class: App\Handler\Symfony4HttpHandler
+
+    raketman.async.handler.symfony3_http:
+        class: App\Handler\Symfony3HttpHandler
+
+    raketman.async.handler.symfony4_websocket:
+        class: App\Handler\Symfony4WebsocketHandler

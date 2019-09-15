@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Compiler\HandlerPass;
 use OldSound\RabbitMqBundle\DependencyInjection\Compiler\RegisterPartsPass;
 use OldSound\RabbitMqBundle\DependencyInjection\OldSoundRabbitMqExtension;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;

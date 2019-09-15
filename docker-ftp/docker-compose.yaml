@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+    simple-ftp-server:
+        ports:
+            - '11021:21'
+        environment:
+            - FTP_USER=test
+            - FTP_PASS=test
+        image: mauler/simple-ftp-server
+        volumes:
+          - ./data:/ftp-home

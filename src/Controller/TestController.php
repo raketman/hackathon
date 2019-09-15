@@ -3,12 +3,14 @@ namespace App\Controller;
 
 
 use App\Integrations\BpuimHttpClient;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use VCR\Storage\Json;
 
 /**
  * Class TestController
@@ -17,6 +19,29 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TestController extends Controller
 {
+
+    /**
+     * @return Response
+     * @throws \Exception
+     *
+     * @Route(
+     *     "/test/message",
+     * )
+     */
+    public function websockettest(Request $request, LoggerInterface $logger)
+    {
+        try {
+            //var_dump($_SERVER,getenv('LOG_SESSION_ID'));exit;
+        } catch (\Throwable $e) {
+            //var_dump($e);exit;
+        }
+
+        return new JsonResponse([
+            $request->query->all() + ['dude' => (new \DateTimeImmutable())->format('Y-m-d H:i:s')]
+        ]);
+
+    }
+
     /**
      * @return Response
      * @throws \Exception
@@ -25,10 +50,12 @@ class TestController extends Controller
      *     "/test/rabbitmq/publish",
      * )
      */
-    public function publish(Request $request)
+    public function publish(Request $request, LoggerInterface $logger)
     {
         $msg = ['version' => $request->get('version', 1), 'answer_route' => uniqid()];
-        $result = $this->get('old_sound_rabbit_mq.test_producer')->publish(json_encode($msg));
+        $producer = $this->get('old_sound_rabbit_mq.testgo_producer');
+        $producer->setLogger($logger);
+        $result = $producer->publish(json_encode($msg));
 
         var_dump($result);
 

@@ -1,0 +1,8 @@
+[2019-09-08 16:42:58][DEBUG][ERROR] : [Uncaught ArgumentCountError: Swoole\Process::__construct() expects at most 3 parameters, 4 given in /var/www/hakaton/vendor/easyswoole/component/src/Process/AbstractProcess.php:50
+Stack trace:
+#0 /var/www/hakaton/vendor/easyswoole/component/src/Process/AbstractProcess.php(50): Swoole\Process->__construct(Array, false, 2, true)
+#1 /var/www/hakaton/vendor/easyswoole/component/src/Process/Socket/AbstractUnixProcess.php(20): EasySwoole\Component\Process\AbstractProcess->__construct(Object(EasySwoole\Component\Process\Socket\UnixProcessConfig))
+#2 /var/www/hakaton/vendor/easyswoole/task/src/Task.php(61): EasySwoole\Component\Process\Socket\AbstractUnixProcess->__construct(Object(EasySwoole\Component\Process\Socket\UnixProcessConfig))
+#3 /var/www/hakaton/vendor/easyswoole/task/src/Task.php(40): EasySwoole\Task\Task->__initProcess()
+#4 /var/www/hakaton/vendor/easyswoole/easyswoole/src/Core.php(305): EasySwoole\Task\Task->attachToServer(Object(Swoole\Http\Server))
+#5 /var/www/hakaton/vendor/easyswoole/easyswoole/src/ at file:/var/www/hakaton/vendor/easyswoole/component/src/Process/AbstractProcess.php line:50]

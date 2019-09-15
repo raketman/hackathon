@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    //var socket = new WebSocket("ws://95.142.45.155:9501");
+    var socket = new WebSocket("ws://localhost:9501?id=123");
+    socket.onopen = function() {
+        console.log("Соединение установлено.");
+
+
+        setInterval(function() {
+            socket.send(JSON.stringify({uri: '/test/message', method: 'GET', parameters: {test: 1}}));
+        }, 1000);
+
+    };
+
+    socket.onclose = function(event) {
+        if (event.wasClean) {
+            console.log('Соединение закрыто чисто');
+        } else {
+            console.log('Обрыв соединения'); // например, "убит" процесс сервера
+        }
+        console.log('Код: ' + event.code + ' причина: ' + event.reason);
+    };
+
+    socket.onmessage = function(event) {
+        console.log("Получены данные " + event.data);
+    };
+
+    socket.onerror = function(error) {
+        console.log("Ошибка " + error.message);
+    };
+
+</script>
+</body>
+</html>

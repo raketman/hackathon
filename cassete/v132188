@@ -1,0 +1,30 @@
+[{
+    "request": {
+        "method": "GET",
+        "url": "http:\/\/v132188.hosted-by-vdsina.ru\/proxy\/api\/v1\/catalogs\/12\/records?filters[0][fieldId]=4&filters[0][value]=79196396602",
+        "headers": {
+            "Host": "v132188.hosted-by-vdsina.ru"
+        }
+    },
+    "response": {
+        "status": {
+            "http_version": "1.1",
+            "code": "200",
+            "message": "OK"
+        },
+        "headers": {
+            "Server": "nginx\/1.16.0",
+            "Content-Type": "application\/json",
+            "Transfer-Encoding": "chunked",
+            "Connection": "keep-alive",
+            "X-Powered-By": "PHP\/7.3.6",
+            "Cache-Control": "no-cache, private",
+            "Date": "Thu, 18 Jul 2019 19:17:28 GMT",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
+            "Access-Control-Allow-Headers": "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range",
+            "Access-Control-Expose-Headers": "Content-Length,Content-Range"
+        },
+        "body": "[{\"id\":\"3\",\"title\":\"\u0428\u0430\u043c\u0441\u0435\u0435\u0432 \u041d\u0438\u043a\u0438\u0442\u0430\",\"values\":{\"2\":\"\u0428\u0430\u043c\u0441\u0435\u0435\u0432 \u041d\u0438\u043a\u0438\u0442\u0430\",\"4\":[{\"id\":\"3\",\"contact\":\"+7 919 639 66 02\",\"comment\":\"\"}]}}]"
+    }
+}]

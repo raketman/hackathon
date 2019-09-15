@@ -31,6 +31,8 @@ class TestConsumer implements ConsumerInterface
 
                 print_r($data);
 
+                $this->container->get('old_sound_rabbit_mq.testgo_producer')->publish($data['answer_route']. rand(1, 100));
+
                 print_r([$this->resolver->getVersion(), get_class($this->container->get('App\Test\IService'))]);
             } catch (\Throwable $e) {
                 echo $e->getMessage() . "\n\n";

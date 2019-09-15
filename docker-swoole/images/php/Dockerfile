@@ -1,4 +1,4 @@
-FROM php:7.3-fpm
+FROM php:7.2-fpm
 # RUN выполняет идущую за ней команду в контексте нашего образа.
 # В данном случае мы установим некоторые зависимости и модули PHP.
 # Для установки модулей используем команду docker-php-ext-install.
@@ -29,9 +29,9 @@ RUN apt-get update \
     && apt-get install -y htop \
     && apt-get install -y vim
 
-RUN apt-get update && apt-get install -y wget git unzip \
-    && pecl install xdebug-2.7.1 \
-    && docker-php-ext-enable xdebug
+#RUN apt-get update && apt-get install -y wget git unzip \
+#    && pecl install xdebug-2.7.1 \
+#    && docker-php-ext-enable xdebug
 
 
 # Bcmath extension
@@ -39,25 +39,26 @@ RUN docker-php-ext-install bcmath
 RUN docker-php-ext-install pcntl
 
 # Redis extension
-RUN wget http://pecl.php.net/get/redis-${PHPREDIS_VERSION}.tgz -O /tmp/redis.tar.tgz \
-    && pecl install /tmp/redis.tar.tgz \
-    && rm -rf /tmp/redis.tar.tgz \
-    && docker-php-ext-enable redis
+#RUN wget http://pecl.php.net/get/redis-${PHPREDIS_VERSION}.tgz -O /tmp/redis.tar.tgz \
+#    && pecl install /tmp/redis.tar.tgz \
+#    && rm -rf /tmp/redis.tar.tgz \
+#    && docker-php-ext-enable redis
+
+RUN apt-get install vim -y && \
+    apt-get install openssl -y && \
+    apt-get install libssl-dev -y && \
+    apt-get install wget -y
 
 # Swoole extension
-RUN wget https://github.com/swoole/swoole-src/archive/v${SWOOLE_VERSION}.tar.gz -O swoole.tar.gz \
-    && mkdir -p swoole \
-    && tar -xf swoole.tar.gz -C swoole --strip-components=1 \
-    && rm swoole.tar.gz \
-    && ( \
-    cd swoole \
-    && phpize \
-    && ./configure --enable-async-redis --enable-mysqlnd --enable-openssl --enable-http2 \
-    && make -j$(nproc) \
-    && make install \
-    ) \
-    && rm -r swoole \
-    && docker-php-ext-enable swoole
+RUN cd /tmp && wget https://pecl.php.net/get/swoole-4.2.9.tgz && \
+    tar zxvf swoole-4.2.9.tgz && \
+    cd swoole-4.2.9  && \
+    phpize  && \
+    ./configure  --enable-openssl && \
+    make && make install
+
+RUN touch /usr/local/etc/php/conf.d/swoole.ini && \
+    echo 'extension=swoole.so' > /usr/local/etc/php/conf.d/swoole.ini
 
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -66,13 +67,16 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /var/www/hakaton
 
 # Установим вендоры
-COPY composer.json composer.json
-COPY composer.lock composer.lock
+#COPY composer.json composer.json
+#COPY composer.lock composer.lock
 #RUN  composer install --ignore-platform-reqs
 
 # Добавим свой php.ini, можем в нем определять свои значения конфига
-ADD docker/images/php/ini/php.ini /usr/local/etc/php/conf.d/hakaton.ini
-ADD docker/images/php/ini/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+ADD images/php/ini/php.ini /usr/local/etc/php/conf.d/hakaton.ini
+#ADD images/php/ini/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+EXPOSE 9502
+EXPOSE 9501
 
 # Запускаем контейнер
 # Из документации: The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable,

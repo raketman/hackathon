@@ -1,0 +1,4 @@
+display_errors = On
+php_admin_value[error_log] = /var/log/fpm-php/php-error.log
+max_execution_time = 1000
+max_input_time = 1000
