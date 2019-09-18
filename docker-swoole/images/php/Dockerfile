@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y git zip curl wget \
     && docker-php-ext-configure mysqli --with-mysqli=mysqlnd \
     && docker-php-ext-install mysqli pdo pdo_mysql opcache
 
+#psql
+RUN apt-get update && apt-get install -y libpq-dev && docker-php-ext-install pdo pdo_pgsql
+
 # Для rabbitmq
 RUN docker-php-ext-install sockets
 RUN docker-php-ext-install bcmath

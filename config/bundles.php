@@ -17,4 +17,6 @@ return [
     OldSound\RabbitMqBundle\OldSoundRabbitMqBundle::class => ['all' => true],
     Raketman\Bundle\MonologInjectionBundle\MonologInjectionBundle::class => ['all' => true],
     Raketman\Bundle\ServiceVersioningBundle\ServiceVersioningBundle::class => ['all' => true],
+    Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
+    Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => ['all' => true],
 ];
