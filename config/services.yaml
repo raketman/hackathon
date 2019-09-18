@@ -35,13 +35,6 @@ services:
             $user: '%env(resolve:BPIUM_USER)%'
             $password: '%env(resolve:BPIUM_PASS)%'
 
-
-    App\Command\StartServerCommand:
-        calls:
-            - ['setLogger', ['@logger']]
-        tags:
-            - 'console.command'
-
     #  Команды, который надо сконфигурировать, описать в README
 
     raketman.async.command.http:
