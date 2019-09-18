@@ -1,5 +1,0 @@
-2019-09-15 10:06:32 pid:610 Workerman[raketman:async-websocket-server] already running
-2019-09-15 10:07:06 pid:614 Workerman[raketman:async-websocket-server] already running
-2019-09-15 11:32:55 pid:852 Worker[852] process terminated with ERROR: E_ERROR "Allowed memory size of 134217728 bytes exhausted (tried to allocate 48238592 bytes) in /var/www/hakaton/vendor/symfony/config/Resource/ReflectionClassResource.php on line 139"
-2019-09-15 11:32:57 pid:845 Workerman[console] stopping ...
-2019-09-15 11:32:58 pid:853 Worker[853] process terminated with ERROR: E_ERROR "Allowed memory size of 134217728 bytes exhausted (tried to allocate 48238592 bytes) in /var/www/hakaton/vendor/symfony/config/Resource/ReflectionClassResource.php on line 139"
