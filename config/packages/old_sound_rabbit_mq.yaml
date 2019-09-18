@@ -11,14 +11,8 @@ old_sound_rabbit_mq:
             connection:       default
             exchange_options: { name: 'testgo', type: direct }
     consumers:
-#        test:
-#            connection:       default
-#            exchange_options: { name: 'test', type: direct }
-#            queue_options:    { name: 'test'}
-#            callback:         App\Consumer\TestConsumer
-#
-#        testgo:
-#            connection:       default
-#            exchange_options: { name: 'testgo', type: direct }
-#            queue_options:    { name: 'testgo'}
-#            callback:         App\Consumer\TestConsumer
+        test:
+            connection:       default
+            exchange_options: { name: 'test', type: direct }
+            queue_options:    { name: 'test'}
+            callback:         App\Consumer\TestConsumer

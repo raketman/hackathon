@@ -67,7 +67,6 @@ class WebsocketServerCommand extends Command
 
         $httpWorker->onConnect = function (TcpConnection $connection) {
             try {
-                var_dump($connection);
                 $this->getHandler($connection->worker)->connect($this->createConnection($connection));
             } catch (\Throwable $throwable) {
                 $exception = new OnConnectServerException($throwable->getMessage(), $throwable->getCode(), $throwable);
