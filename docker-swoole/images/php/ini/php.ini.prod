@@ -1,2 +1,0 @@
-display_errors = Off
-php_admin_value[error_log] = /var/log/fpm-php/php-error.log
