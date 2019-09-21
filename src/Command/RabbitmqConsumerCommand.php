@@ -101,27 +101,25 @@ class RabbitmqConsumerCommand extends Command
 
     protected function isPidFileExists($runFile, OutputInterface $output)
     {
-        if (is_readable($runFile)) {
+        if (!is_readable($runFile)) {
+            return false;
+        }
 
-            $file   = fopen($runFile, 'r');
-            $pid    = fread($file, 5);
-            fclose($file);
+        $file   = fopen($runFile, 'r');
+        $pid    = fread($file, 5);
+        fclose($file);
 
-            $checkPidProcess = new Process(sprintf('ps aux | grep %d | wc -l', $pid));
-            $checkPidProcess->run();
 
-            if (3 == intval($checkPidProcess->getOutput())) {
-                return true;
-            } else {
-                // Процесс не запущен, но файл не удален
-                // Грохнем файл процесса
-                if ( ! unlink($runFile)) {
-                    $output->writeln(sprintf('Процесс не запущен, но не удален файл %s. Удалите этот файл вручную.', $this->appPath));
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+        $sourceFile = "/proc/{$pid}/cmdline";
+        if (!is_readable($sourceFile)) {
+            return false;
+        }
+
+        $block = file_get_contents($sourceFile);
+
+        if (!empty($block) && false !== strpos($block, self::$defaultName)) {
+            // Блок файл запущен
+            return true;
         }
 
         return false;
