@@ -29,3 +29,5 @@ docker-ftp/logs
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+# фиксация запусков
+/run
