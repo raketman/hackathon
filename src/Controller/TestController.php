@@ -2,7 +2,9 @@
 namespace App\Controller;
 
 
+use App\Entity\Test;
 use App\Integrations\BpuimHttpClient;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -10,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 use VCR\Storage\Json;
 
 /**
@@ -19,6 +22,26 @@ use VCR\Storage\Json;
  */
 class TestController extends Controller
 {
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @return JsonResponse
+     * @throws \Exception
+     *
+     * @Route(
+     *     "/test/insert",
+     * )
+     */
+    public function insert(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    {
+        $test = new Test();
+
+        $test->setName($request->get('name', mt_rand(100, 1000000)));
+
+        $entityManager->persist($test);
+        $entityManager->flush();
+
+        return new JsonResponse($serializer->serialize($test, 'json', ['groups' => 'full']), 200, [], true);
+    }
 
     /**
      * @return Response
@@ -52,14 +75,14 @@ class TestController extends Controller
      */
     public function publish(Request $request, LoggerInterface $logger)
     {
-        $msg = ['version' => $request->get('version', 1), 'answer_route' => uniqid()];
-        $producer = $this->get('old_sound_rabbit_mq.testgo_producer');
-        $producer->setLogger($logger);
+        $msg = ['version' => $request->get('version', 1), 'answer_route' => uniqid(), 'get' => $request->query->all()];
+        $producer = $this->get('old_sound_rabbit_mq.test_producer');
+        // TODO: не хочет писать в файл при вебсокете
+        //$producer->setLogger($logger);
         $result = $producer->publish(json_encode($msg));
 
-        var_dump($result);
 
-        exit;
+        return new JsonResponse(['result' => $result]);
 
     }
 

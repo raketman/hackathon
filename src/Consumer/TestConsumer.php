@@ -1,8 +1,10 @@
 <?php
 namespace App\Consumer;
 
+use App\Entity\Test;
 use App\Test\IService;
 use App\Test\Resolver;
+use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
@@ -13,10 +15,13 @@ class TestConsumer implements ConsumerInterface
     protected $container;
     protected $resolver;
 
-    public function __construct(ContainerInterface $container, Resolver $resolver)
+    protected $entityManager;
+
+    public function __construct(ContainerInterface $container, Resolver $resolver, EntityManagerInterface $entityManager)
     {
         $this->container = $container;
         $this->resolver = $resolver;
+        $this->entityManager = $entityManager;
     }
 
     public function execute(AMQPMessage $msg)
@@ -33,7 +38,11 @@ class TestConsumer implements ConsumerInterface
 
                 $this->container->get('old_sound_rabbit_mq.testgo_producer')->publish($data['answer_route']. rand(1, 100));
 
-                print_r([$this->resolver->getVersion(), get_class($this->container->get('App\Test\IService'))]);
+
+                $test = new Test();
+                $test->setName($this->resolver->getVersion() . '___' . get_class($this->container->get('App\Test\IService')));
+                $this->entityManager->persist($test);
+                $this->entityManager->flush();
             } catch (\Throwable $e) {
                 echo $e->getMessage() . "\n\n";
             }
