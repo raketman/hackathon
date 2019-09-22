@@ -47,13 +47,34 @@ services:
             - app-db
             - app-rabbitmq
           #- app-elastic
-          #- app-redis
+            - app-redis
         ports:
             - "9502:9502"
             - "9501:9501"
         environment:
             XDEBUG_CONFIG: "remote_host=host.docker.internal remote_enable=1"
             PHP_IDE_CONFIG: "serverName=Docker"
+
+    app-redis:
+        restart: unless-stopped
+        volumes:
+            -  ./volumes/redis:/data
+        container_name: app-redis
+        ports:
+            - "6379:6379"
+        image: redis:5.0.5
+
+    #    app-elastic:
+    #        restart: unless-stopped
+    #
+    #        container_name: app-elastic
+    #        image: elasticsearch:7.2.0
+    #        volumes:
+    #            - ./volumes/elastic:/usr/share/elasticsearch/data
+    #        ports:
+    #            - 11211:11211
+    #            - "9200:9200"
+
     app-db:
         #user: '0:0'
         container_name: app-db
