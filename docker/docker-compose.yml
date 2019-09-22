@@ -2,7 +2,13 @@
 version: '3'
 # Список наших сервисов (контейнеров)
 services:
-
+    app-composer:
+        restart: 'no'
+        image: composer:latest
+        command: install --ignore-platform-reqs -o
+        working_dir: /var/www/hakaton
+        volumes:
+            - ./..:/var/www/hakaton
     app-nginx:
         container_name: app-nginx
         # используем последний стабильный образ nginx
@@ -88,7 +94,7 @@ services:
         working_dir: /app
         command: /bin/sh -c 'yarn && yarn watch'
         volumes:
-            - ./..:/app:rw
+            - ./..:/app
 volumes:
     pgdata:
         driver: local
