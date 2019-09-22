@@ -83,8 +83,9 @@ trait WorkermanCommandTrait
             }
         } else {
             $GLOBALS['argv'][0] = self::$defaultName;
-            $GLOBALS['argv'][1] = 'stop';
+            $GLOBALS['argv'][1] = $input->getArgument('action');
         }
+
 
         // Проверим директорию
         if(!is_dir($input->getOption('run-dir')) && !mkdir($input->getOption('run-dir'), 0755, true) && !is_dir($input->getOption('run-dir'))) {
