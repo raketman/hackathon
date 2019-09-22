@@ -1,6 +1,6 @@
 <?php
 register_shutdown_function(function(){
-    print_r(error_get_last());
+    //print_r(error_get_last());
 });
 use App\Kernel;
 use Symfony\Component\Debug\Debug;
