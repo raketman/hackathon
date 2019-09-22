@@ -3,15 +3,15 @@ version: '3'
 # Список наших сервисов (контейнеров)
 services:
 
-    hakaton-nginx:
-        container_name: hakaton-nginx
+    app-nginx:
+        container_name: app-nginx
         # используем последний стабильный образ nginx
         image: nginx:stable
 
         restart: unless-stopped
         # маршрутизируем порты
         ports:
-            - "80:80"
+            - "81:80"
 #            - "443:443"
         # монтируем директории, слева директории на основной машине, справа - куда они монтируются в контейнере
         volumes:
@@ -20,43 +20,54 @@ services:
             - ./logs:/var/log/nginx
         # nginx должен общаться с php контейнером
         links:
-            - hakaton-php
+            - app-php
 
-    hakaton-php:
-        container_name: hakaton-php
+    app-php:
+        container_name: app-php
 
         restart: unless-stopped
 
         # у нас свой образ для PHP, указываем путь к нему и говорим что его надо собрать
         build:
-            context: ./..
-            dockerfile: ./docker/images/php/Dockerfile
+            context: ./
+            dockerfile: ./images/php/Dockerfile
         # этот образ будет общаться с mysql
         # монтируем директорию с проектами
         volumes:
             - ./..:/var/www/hakaton
             # Подключим логи
             - ./logs:/var/log/nginx
-            #исключим вендоры из расшаренной папки (сделао для исключения виндусятников, т.к там тормозит файловая система)
-            #- /var/www/hakaton/vendor/
         links:
-          #- hakaton-elastic
-          - hakaton-redis
-          - hakaton-rabbitmq
+            - app-db
+            - app-rabbitmq
+          #- app-elastic
+          #- app-redis
+        ports:
+            - "9502:9502"
+            - "9501:9501"
         environment:
             XDEBUG_CONFIG: "remote_host=host.docker.internal remote_enable=1"
             PHP_IDE_CONFIG: "serverName=Docker"
-
-    hakaton-redis:
+    app-db:
+        #user: '0:0'
+        container_name: app-db
+        image: postgres
+        restart: unless-stopped
+        volumes:
+            - pgdata:/var/lib/postgresql/data/hakaton
+        environment:
+            POSTGRES_PASSWORD: hakaton
+            POSTGRES_DB: hakaton
+            POSTGRES_USER: hakaton
+            POSTGRES_HOST: pg.example_net
+            POSTGRES_PORT: 5432
+            PGDATA: /var/lib/postgresql/data/hakaton
+        ports:
+            - "5437:5432"
+    app-rabbitmq:
         restart: unless-stopped
 
-        container_name: hakaton-redis
-        image: redis:5.0.5
-
-    hakaton-rabbitmq:
-        restart: unless-stopped
-
-        container_name: hakaton-rabbitmq
+        container_name: app-rabbitmq
         image: rabbitmq:3.7.5-management
         hostname: app-rabbitmq
         ports:
@@ -70,15 +81,14 @@ services:
             RABBITMQ_DEFAULT_PASS: rabbitmq
             RABBITMQ_DEFAULT_VHOST: /
 
-    hakaton-golang:
-        #restart: unless-stopped
-
-        #image: golang:1.8.5-jessie
-        build: ./images/golang
+    app-yarn:
+        container_name: app-yarn
+        restart: unless-stopped
+        image: node:current-alpine
+        working_dir: /app
+        command: /bin/sh -c 'yarn && yarn watch'
         volumes:
-            - ../golang:/go/src/app
-        #working_dir: /go/src/app
-
-        #command: go run main.go
-        links:
-            - hakaton-redis
+            - ./..:/app:rw
+volumes:
+    pgdata:
+        driver: local
