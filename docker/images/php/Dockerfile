@@ -75,6 +75,16 @@ RUN         apt-get update --fix-missing \
             && docker-php-source delete \
             && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && \
+    pecl channel-update pecl.php.net && \
+    pecl install apcu igbinary && \
+    # compile Redis with igbinary support
+    pecl bundle redis && cd redis && phpize && ./configure --enable-redis-igbinary && make && make install && \
+    docker-php-ext-install bcmath sockets && \
+    docker-php-ext-enable apcu igbinary redis && \
+    docker-php-source delete && \
+    rm -r /tmp/* /var/cache/* /var/www/html/*
+
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
