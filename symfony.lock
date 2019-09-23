@@ -190,6 +190,12 @@
             "config/packages/stof_doctrine_extensions.yaml"
         ]
     },
+    "superbalist/php-pubsub": {
+        "version": "2.0.0"
+    },
+    "superbalist/php-pubsub-redis": {
+        "version": "2.0.0"
+    },
     "swiftmailer/swiftmailer": {
         "version": "v6.2.1"
     },
