@@ -52,6 +52,28 @@ RUN apt-get install vim -y && \
     apt-get install libssl-dev -y && \
     apt-get install wget -y
 
+#redis
+RUN         apt-get update --fix-missing \
+            && apt-get install -y libhiredis-dev \
+            && pecl channel-update pecl.php.net \
+            && pecl install redis-4.3.0 \
+            && docker-php-ext-enable redis \
+            && git clone https://github.com/nrk/phpiredis.git \
+            && ( \
+                cd phpiredis \
+                && git checkout v1.0.0 \
+                && phpize \
+                && ./configure --enable-phpiredis \
+                && make \
+                && make install \
+            ) \
+            && rm -r phpiredis \
+            && apt-get autoremove -fy \
+            && apt-get clean \
+            && apt-get autoclean -y \
+            && docker-php-ext-enable phpiredis \
+            && docker-php-source delete \
+            && rm -rf /var/lib/apt/lists/*
 
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
