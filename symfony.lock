@@ -99,6 +99,9 @@
     "egulias/email-validator": {
         "version": "2.1.8"
     },
+    "evenement/evenement": {
+        "version": "v3.0.1"
+    },
     "facebook/webdriver": {
         "version": "1.7.1"
     },
@@ -154,6 +157,9 @@
     "psr/container": {
         "version": "1.0.0"
     },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/link": {
         "version": "1.0.0"
     },
@@ -165,6 +171,39 @@
     },
     "raketman/service-versioning-bundle": {
         "version": "1.0.0"
+    },
+    "react/cache": {
+        "version": "v1.0.0"
+    },
+    "react/dns": {
+        "version": "v1.2.0"
+    },
+    "react/event-loop": {
+        "version": "v1.1.0"
+    },
+    "react/http": {
+        "version": "v0.8.4"
+    },
+    "react/promise": {
+        "version": "v2.7.1"
+    },
+    "react/promise-stream": {
+        "version": "v1.2.0"
+    },
+    "react/promise-timer": {
+        "version": "v1.5.1"
+    },
+    "react/react": {
+        "version": "v1.0.0"
+    },
+    "react/socket": {
+        "version": "v1.3.0"
+    },
+    "react/stream": {
+        "version": "v1.1.0"
+    },
+    "ringcentral/psr7": {
+        "version": "1.2.2"
     },
     "sensio/framework-extra-bundle": {
         "version": "5.2",
