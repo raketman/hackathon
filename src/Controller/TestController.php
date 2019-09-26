@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,6 +85,67 @@ class TestController extends Controller
 
         return new JsonResponse(['result' => $result]);
 
+    }
+
+    /**
+     * @return Response
+     * @throws \Exception
+     *
+     * @Route(
+     *     "/test/redis/pubsub",
+     * )
+     */
+    public function redis(Request $request, LoggerInterface $logger)
+    {
+        // TODO: Вынести в настройки сервиса
+        $client = RedisAdapter::createConnection('redis://app-redis:6379');
+        print_r([$client->get('test')]);
+
+        $adapter = new \Superbalist\PubSub\Redis\RedisPubSubAdapter($client);
+
+        // consume messages
+        // note: this is a blocking call
+        $adapter->subscribe('my_channel', function ($message) {
+            var_dump($message);
+        });
+
+
+        return new JsonResponse();
+    }
+
+
+    /**
+     * @return Response
+     * @throws \Exception
+     *
+     * @Route(
+     *     "/test/redis/publish",
+     * )
+     */
+    public function redispub(Request $request, LoggerInterface $logger)
+    {
+        // TODO: Вынести в настройки сервиса
+        $client = RedisAdapter::createConnection('redis://app-redis:6379');
+        print_r([$client->get('test')]);
+
+        $client = new \Predis\Client('tcp://app-redis:6379');
+
+        $adapter = new \Superbalist\PubSub\Redis\RedisPubSubAdapter($client);
+
+        // publish messages
+        $adapter->publish('my_channel', 'HELLO WORLD');
+        $adapter->publish('my_channel', ['hello' => 'world']);
+        $adapter->publish('my_channel', 1);
+        $adapter->publish('my_channel', false);
+
+// publish multiple messages
+        $messages = [
+            'message 1',
+            'message 2',
+        ];
+        $adapter->publishBatch('my_channel', $messages);
+
+        return new JsonResponse();
     }
 
     /**
