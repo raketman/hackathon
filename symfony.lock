@@ -135,6 +135,9 @@
     "ocramius/proxy-manager": {
         "version": "2.1.1"
     },
+    "php-ai/php-ml": {
+        "version": "0.8.0"
+    },
     "php-amqplib/php-amqplib": {
         "version": "v2.9.2"
     },

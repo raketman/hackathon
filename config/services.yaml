@@ -36,11 +36,18 @@ services:
             $user: '%env(resolve:BPIUM_USER)%'
             $password: '%env(resolve:BPIUM_PASS)%'
 
-
+    # Команда для запуска воркеров
     App\Command\RabbitmqConsumerCommand:
         calls:
             - ['setLogger', ['@logger']]
             - ['setContainer', ['@service_container']]
+        tags:
+            - 'console.command'
+
+
+    App\Command\Ml\MlStartCommand:
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - 'console.command'
 

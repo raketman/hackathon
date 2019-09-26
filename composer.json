@@ -11,6 +11,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "nyholm/psr7": "^1.2",
+        "php-ai/php-ml": "^0.8.0",
         "php-amqplib/rabbitmq-bundle": "^1.14",
         "predis/predis": "0.8.*",
         "raketman/monolog-injection-bundle": "1.0.2",
