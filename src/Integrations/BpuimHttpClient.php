@@ -38,6 +38,7 @@ class BpuimHttpClient
             case 'post':
             case 'put':
             case 'delete':
+                $apiClientMethod = $apiClientMethod === 'put' ? 'patch' : $apiClientMethod;
                 $apiClientMethodParams = json_decode($httpRequest->getContent(), true);
                 $this->logger->error('test', [$apiClientMethodParams]);
                 $paramName = 'json';

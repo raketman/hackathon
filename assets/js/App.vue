@@ -8,10 +8,11 @@
 <script>
 import Error from './components/block/Error';
 
+
 export default {
     name: 'App',
     components: {
-        Error,
+        Error
     },
     computed: {
         showRouter() {
@@ -30,8 +31,10 @@ export default {
             if (mutation.type === 'AUTHORIZED') {
                 this.$store.dispatch('SET_USER', this.$store.getters.GET_TOKEN);
             }
-
         });
+
+        // Стартанем проверку цели
+        this.$store.dispatch('INIT_TARGET');
     },
 }
 </script>

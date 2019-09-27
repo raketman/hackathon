@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <title-block title="Оплата" />
+        <title-block title="Оставить заявку" />
 
         <form action="/login" method="post" @submit.prevent="payment">
             <text-field v-model="card" v-mask="'#### #### #### ####'"

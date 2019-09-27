@@ -1,11 +1,10 @@
 
 import Vue from 'vue';
 import VueRouter from 'vue-router'
-import Objects from './components/pages/Objects'
-import Second from './components/pages/Second'
+import Start from './components/pages/Start'
 import Login from './components/pages/Login'
-import Payment from './components/pages/Payment'
 import Map from './components/pages/Map'
+import Statement from './components/pages/Statement'
 import store from './store/index'
 
 Vue.use(VueRouter);
@@ -27,10 +26,9 @@ const ifAuthenticated = (to, from, next) => {
 };
 
 const routes = [
-    {path: '/', component: Objects, name: 'start', beforeEnter: ifAuthenticated,},
-    {path: '/check', component: Second, name: 'second', beforeEnter: ifAuthenticated,},
+    {path: '/', component: Start, name: 'start', beforeEnter: ifAuthenticated,},
     {path: '/login', component: Login, name: 'login', beforeEnter: ifNotAuthenticated,},
-    {path: '/payment', component: Payment, name: 'payment', beforeEnter: ifAuthenticated,},
+    {path: '/statement', component: Statement, name: 'payment', beforeEnter: ifAuthenticated,},
     {path: '/map', component: Map, name: 'map', beforeEnter: ifAuthenticated,}
 ];
 

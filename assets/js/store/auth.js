@@ -1,4 +1,5 @@
 import axios from "./axios";
+import Catalog from "../helper/catalog"
 
 export default {
     state: {
@@ -34,6 +35,7 @@ export default {
                 .then((resp) => {
                     context.commit('LOGOUT');
                     context.commit('RESET_USER')
+                    context.commit('RESET_TARGET')
                 })
                 .catch(err => {
                     // eslint-disable-next-line
@@ -42,9 +44,10 @@ export default {
 
         },
         AUTHORIZED: (context, payload) => {
+
             return axios({
                 method: 'get',
-                url: '/proxy/api/v1/catalogs/12/records?filters[0][fieldId]=4&filters[0][value]='+payload,
+                url: '/proxy/api/v1/catalogs/' + Catalog.getUserCatalog() + '/records?filters[0][fieldId]=' + Catalog.getUserLoginField() + '&filters[0][value]='+payload.replace('+7','').replace(' (', '').replace(') ', '').replace(' ', '').replace('-', '').replace('-', ''),
             })
                 .catch(err => {
                     // eslint-disable-next-line
