@@ -44,7 +44,7 @@ export default {
         AUTHORIZED: (context, payload) => {
             return axios({
                 method: 'get',
-                url: '/proxy/api/v1/catalogs/12/records?filters[0][fieldId]=4&filters[0][value]='+payload,
+                url: '/proxy/api/v1/catalogs/13/records?filters[0][fieldId]=32&filters[0][value]='+payload,
             })
                 .catch(err => {
                     // eslint-disable-next-line
