@@ -19,10 +19,7 @@
 ###< symfony/web-server-bundle ###
 docker/volumes
 docker/logs
-docker-swoole/volumes
-docker-swoole/logs
-docker-ftp/volumes
-docker-ftp/logs
+docker/*override.yml
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 /public/build/
