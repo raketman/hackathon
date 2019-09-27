@@ -56,10 +56,10 @@
                     }, 5000);
                 }
 
-
-                if (parseInt(event.values.status) === 2) {
+                if (event.values && parseInt(event.values.status) === 2) {
                     clearInterval(interval);
-                    this.$router.push({name: 'result'});
+                    this.$store.commit('RESET_TARGET');
+                    this.$router.push({name: 'bonus'});
                 }
 
             });

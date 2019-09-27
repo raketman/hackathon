@@ -1,5 +1,6 @@
 import axios from "./axios";
 import Catalog from "../helper/catalog"
+import moment from 'moment'
 
 export default {
     state: {
@@ -106,7 +107,7 @@ export default {
                     console.log(resp.data);
 
                     context.state.event.values.status = data[4];
-                    context.commit('SET_EVENT', context.state.even);
+                    context.commit('SET_EVENT', context.state.event);
                 })
                 .catch(err => {
                     // eslint-disable-next-line
@@ -116,15 +117,15 @@ export default {
         },
 
         ADD_EVENT: (context, payload) => {
-            context.commit('SET_EVENT', {id: 2, values: {status: 1}});
-            return;
+            // context.commit('SET_EVENT', {id: 2, values: {status: 1}});
+            // return;
 
 
             let catalog = Catalog.getObjectEventCatalog();
             let data = {
                 2:  [{
                     sectionId: Catalog.getStorageSection(),
-                    catalogId: Catalog.getObjectEventCatalog(),
+                    catalogId: Catalog.getObjectCatalog(),
                     catalogTitle: "Точки сбора",
                     recordId: context.state.target_id
                 }],
@@ -134,7 +135,8 @@ export default {
                     catalogTitle: "Пользователи",
                     recordId: context.getters.GET_TOKEN
                 }],
-                4: ["1"]
+                4: ["1"],
+                5: moment().format('YYYY:MM DD HH:mm:ss')
             };
 
             return axios({
@@ -149,7 +151,7 @@ export default {
 
                     context.commit('SET_EVENT', Catalog.parseByCatalog({
                         id: resp.data.id,
-                        title: payload.title,
+                        title: '',
                         values: data
                     }, catalog));
                 })
