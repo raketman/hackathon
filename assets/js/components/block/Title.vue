@@ -1,5 +1,5 @@
 <template>
-    <div class="col a-center">
+    <div class="col a-center top-block">
         <h3 class="title col">{{ title }}</h3>
         <logout v-if="this.$store.getters.IS_AUTHORIZED" />
     </div>
@@ -20,5 +20,8 @@
 </script>
 
 <style scoped>
-
+    .top-block {
+        z-index: 10;
+        position: relative;
+    }
 </style>

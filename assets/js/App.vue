@@ -94,6 +94,7 @@ export default {
         display: flex;
         padding: 0 20px;
         min-height: 100vh;
+        position: relative;
         background: #F8F8F8;
         justify-content: stretch;
     }
