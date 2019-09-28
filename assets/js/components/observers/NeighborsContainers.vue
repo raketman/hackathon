@@ -3,15 +3,15 @@
         <div class="close" @click="stop"></div>
 
         <div class="point-info">
-            <img class="point-image" src=""
-                 :alt="this.$store.getters.GET_TARGET.title" />
+            <img class="point-image" v-bind:src="getPhoto"
+                 :alt="container.title" />
             <div class="point-wrp">
-                <div class="point-name" v-html="this.$store.getters.GET_TARGET.title"></div>
-                <div class="point-types">Бумага, металл, стекло, пластик</div>
+                <div class="point-name" v-html="container.title"></div>
+                <div class="point-types" v-html="getType"></div>
             </div>
         </div>
 
-        <div class="point-address">Возле Эдельвейс, советская, 92, c. Столбище </div>
+        <div class="point-address" v-html="getAddress"></div>
 
         <button-field :class="{'btn-action': inArea}" v-if="!processing" @click="start" title="Сдать мусор" />
     </div>
@@ -20,6 +20,7 @@
 <script>
     import ButtonField from '../forms/Button'
     import IntervalStore from '../../helper/intervals'
+    import ContainerType from '../../enums/container-types'
 
     export default {
         name: 'NeighborsContainers',
@@ -69,6 +70,22 @@
             },
             container() {
                 return this.$store.getters.GET_TARGET;
+            },
+            getPhoto() {
+                return this.container.values.photo ? ( this.container.values.photo[0] ? this.container.values.photo[0].url : '') : '';
+            },
+            getAddress() {
+                return this.container.values.address ? this.container.values.address :  this.container.values.longitude + ' ' + this.container.values.latitude;;
+            },
+            getType() {
+                var types = [];
+                for(var i in this.container.values.types) {
+                    var type = this.container.values.types[i];
+
+                    types.push(ContainerType.getTitle(type).toLowerCase())
+                }
+
+                return types.join(', ');
             }
         },
         methods: {

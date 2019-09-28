@@ -42,6 +42,21 @@ export default {
                 id: 9,
                 code: 'size'
             },
+            {
+                catalog: 14,
+                id: 12,
+                code: 'address'
+            },
+            {
+                catalog: 14,
+                id: 11,
+                code: 'photo'
+            },
+            {
+                catalog: 14,
+                id: 10,
+                code: 'types'
+            },
 
             // event
             {
