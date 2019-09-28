@@ -37,14 +37,30 @@
             route: null,
             selectedPlacemark: null, // this.$store.getters.SELECTED,
             points: [
-                [55.612360, 49.299670],
-                [55.612138, 49.300547],
-                [55.612500, 49.297044],
-                [55.611354, 49.301347],
-                [55.609873, 49.297310],
-                [55.609825, 49.293998],
-                [55.610584, 49.291835],
-                [55.613922, 49.280004],
+                {
+                    coords: [55.612360, 49.299670],
+                },
+                {
+                    coords: [55.612138, 49.300547],
+                },
+                {
+                    coords: [55.612500, 49.297044],
+                },
+                {
+                    coords: [55.611354, 49.301347],
+                },
+                {
+                    coords: [55.609873, 49.297310],
+                },
+                {
+                    coords: [55.609825, 49.293998],
+                },
+                {
+                    coords: [55.610584, 49.291835],
+                },
+                {
+                    coords: [55.613922, 49.280004],
+                }
             ],
         }),
         methods: {
@@ -103,27 +119,34 @@
                         .then((result) => {
                             const coords = result.geoObjects.get(0).geometry.getCoordinates();
                             if (this.me) {
-                                const circle = new window.ymaps.Circle([coords, 10]);
+                                const circle = new window.ymaps.Circle([coords, 10], null, {visible: false});
+                                this.map.geoObjects.add(circle);
                                 const objects = window.ymaps.geoQuery(this.me);
                                 const moveCheck = objects.searchInside(circle);
                                 moveCheck.then(() => {
-                                    if (moveCheck.getLength()) {
+                                    if (!moveCheck.getLength()) {
+                                        window.console.log('Идем...');
                                         this.me.get(0).geometry.setCoordinates(coords);
 
                                         if (this.selectedPlacemark && this.route) {
                                             this.route.model.setReferencePoints([
                                                 coords,
-                                                this.selectedPlacemark.geometry.getCoordinates()
+                                                this.selectedPlacemark
                                             ]);
 
                                             const objects = window.ymaps.geoQuery(this.selectedPlacemark);
                                             const objectsInsideCircle = objects.searchInside(circle);
                                             objectsInsideCircle.then(() => {
                                                 if (objectsInsideCircle.getLength()) {
+                                                    window.console.log('Дошли!');
                                                     objectsInsideCircle.setOptions('preset', 'islands#redIcon');
+                                                } else {
+                                                    window.console.log('Но еще не дошли =(');
                                                 }
                                             });
                                         }
+                                    } else {
+                                        window.console.log('Стоим на месте =\'(');
                                     }
                                 });
                             } else {
@@ -140,8 +163,8 @@
             addPoints() {
                 //region Пункт сбора
                 const myCollection = new window.ymaps.GeoObjectCollection();
-                this.points.forEach(coords => {
-                    const placemark = new window.ymaps.Placemark(coords, null,
+                this.points.forEach(point => {
+                    const placemark = new window.ymaps.Placemark(point.coords, null,
                         //this.getPointStyle()
                         this.merge(this.getPointStyle(), this.getBaloonStyle())
                     );
@@ -151,12 +174,13 @@
                             return;
                         }
 
-                        this.createRoute([
+                        const referencePoints = [
                             this.me.get(0).geometry.getCoordinates(),
                             e.get('coords'),
-                        ]);
+                        ];
                         this.selectedPlacemark = e.get('target');
                         this.map.geoObjects.removeAll();
+                        this.createRoute(referencePoints);
                     });
                     myCollection.add(placemark);
                 });
@@ -275,6 +299,13 @@
                      balloonPanelMaxMapArea: 0,
                 }
             },
+        },
+        created() {
+            window.ymaps.geolocation.get({
+                autoReverseGeocode : false, // отключить обратное геокодирование (тарифицируется)
+            }).then(function (res) {
+                this.coords = res.geoObjects.get(0).geometry.getCoordinates();
+            });
         },
         mounted() {
         },
