@@ -42,4 +42,13 @@ export default {
     getBonusCatalog() {
         return 18;
     },
+    getStatementSection() {
+        return 5;
+    },
+    getStatementCatalog() {
+        return 19;
+    },
+    getStatementOwnerCatalog() {
+        return 20;
+    }
 }

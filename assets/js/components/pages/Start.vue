@@ -3,7 +3,11 @@
         <title-block title="Стартовая" />
 
         <div class="payment a-bottom">
-            <button-field  @click="startPayment" title='Выбросить мусор' />
+            <button-field  @click="startGarbage" title='Выбросить мусор' />
+        </div>
+
+        <div class="payment a-bottom">
+            <button-field  @click="connectGarbage" title='ПРисоединиться' />
         </div>
     </div>
 </template>
@@ -28,17 +32,11 @@
         computed: {
         },
         methods: {
-            selectObject(object) {
-                this.$store.commit('CHANGE_SELECTED_OBJECT', object);
-            },
-            deleteObject(object) {
-                this.$store.dispatch('DELETE_OBJECT', object);
-            },
-            startPayment() {
-                if (parseInt(this.getPaymentSum)  === 0) {
-                    return;
-                }
+            startGarbage() {
                 this.$router.push({ name: 'map' });
+            },
+            connectGarbage() {
+                this.$router.push({ name: 'statement' });
             },
         },
         mounted() {

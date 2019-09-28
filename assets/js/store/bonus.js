@@ -53,6 +53,36 @@ export default {
                 })
 
         },
+        ADD_BONUS: (context, payload) => {
+            let min = Math.ceil(1);
+            let max = Math.floor(5);
+
+            let catalog = CatalogHelper.getBonusCatalog();
+            let data = {
+                7:  [Injection.getEvent(context.getters.GET_EVENT.id)],
+                2: [Injection.getUser()],
+                4: Math.floor(Math.random() * (max - min))  + min,
+                3: moment().format('YYYY:MM DD HH:mm:ss'),
+                6: 1
+            };
+
+            return axios({
+                method: 'post',
+                url: '/proxy/api/v1/catalogs/' + catalog + '/records?timezoneOffset=180',
+                data: {
+                    values: data
+                }
+            })
+                .then((resp) => {
+                    console.log(resp.data);
+                    context.commit('INIT_LAST_BONUS', resp.data.id);
+                })
+                .catch(err => {
+                    // eslint-disable-next-line
+                    console.warn(err);
+                })
+
+        },
     },
 };
 

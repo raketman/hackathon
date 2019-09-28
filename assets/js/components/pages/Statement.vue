@@ -1,15 +1,17 @@
 <template>
     <div class="row">
-        <title-block title="Оставить заявку" />
+        <title-block title="Оставить заявку на подключение" />
 
-        <form action="/login" method="post" @submit.prevent="payment">
-            <text-field v-model="card" v-mask="'#### #### #### ####'"
-                        name="code" placeholder="Номер карты" required pattern="\d{4} \d{4} \d{4} \d{4}" />
-            <text-field v-model="valid" v-mask="'## / ##'"
-                        name="valid" placeholder="Дата валидности" required pattern="\d\d / \d\d" />
-            <text-field v-model="csv" v-mask="'###'"
-                        type="password" name="csv" placeholder="CSV" required pattern="\d{3}" />
-            <button-field class="btn-action" title="Оплатить" />
+        <div v-if="isSended">
+            Мы с вами свяжемся
+
+        </div>
+        <form v-if="!isSended" action="/statement" method="post" @submit.prevent="load">
+            <text-field v-model="name"
+                        name="name" placeholder="Имя" required />
+            <text-field v-model="contact"
+                        name="contact" placeholder="Контакты" required  />
+            <button-field class="btn-action" title="Отправить" />
         </form>
         <button-field title="Назад" @click="back" />
     </div>
@@ -23,75 +25,34 @@
     import PaymentSumResolver from '../../helper/payment-sum-resolver';
 
     export default {
-        name: 'Login',
+        name: 'Statement',
         components: {
             ButtonField,
             TextField,
             TitleBlock,
         },
         data: () => ({
-            csv: '123',
-            valid: '12/21',
-            card: '1234567887654321',
+            isSended: false,
+            name: '',
+            contact: ''
         }),
         directives: {
             mask,
         },
         computed: {
-            getCheckedObject() {
-                return this.$store.getters.OBJECTS.filter( item => { return item.checked })
-            }
         },
         created() {
-            if  (this.getCheckedObject.length === 0) {
-                this.$router.push({name: 'start'});
-            }
         },
         methods: {
             back() {
                 this.$router.push({name: 'start'});
             },
-            payment() {
+            load() {
                 // Для каждого объекта создадим платеж
                 let promises = [];
 
-                // Получим отмеченные документы
-                let pays = [];
-                for(var i in this.getCheckedObject) {
-                    var object = this.getCheckedObject[i];
-                    var counters =  this.$store.getters.COUNTERS.filter( item => { return item.object_id === object.id })
-
-                    for(var c in counters) {
-                        var counter = counters[c];
-                        var sum = PaymentSumResolver.getCounterSum(counter);
-                        if (sum === 0) {
-                            continue;
-                        }
-
-                        pays.push({
-                            "id": counter.id,
-                            "objectId": object.id,
-                            "value": sum
-                        });
-                    }
-                }
-
-                promises.push(this.$store.dispatch('CREATE_PAYMENT', {'pays': pays}));
-
-                Promise.all(promises).then(() => {
-                    this.$router.push({ name: 'start' });
-                });
-
-                // for(let i in this.$store.getters.OBJECTS) {
-                //     var object = this.$store.getters.OBJECTS[i];
-                //     promises.push(this.$store.dispatch('CREATE_PAYMENT', {
-                //         'object': object,
-                //         'sum': PaymentSumResolver.getSum(object),
-                //     }));
-                // }
-
-                Promise.all(promises).then(() => {
-                    this.$router.push({ name: 'start' });
+                this.$store.dispatch('CREATE_STATEMENT', {name: this.name, contact: this.contact}).then( ()=> {
+                    this.isSended = true;
                 });
             },
         },

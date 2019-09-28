@@ -29,7 +29,7 @@ const ifAuthenticated = (to, from, next) => {
 const routes = [
     {path: '/', component: Start, name: 'start', beforeEnter: ifAuthenticated,},
     {path: '/login', component: Login, name: 'login', beforeEnter: ifNotAuthenticated,},
-    {path: '/statement', component: Statement, name: 'payment', beforeEnter: ifAuthenticated,},
+    {path: '/statement', component: Statement, name: 'statement', beforeEnter: ifAuthenticated,},
     {path: '/map', component: Map, name: 'map', beforeEnter: ifAuthenticated,},
     {path: '/bonus', component: Bonus, name: 'bonus', beforeEnter: ifAuthenticated,}
 ];
