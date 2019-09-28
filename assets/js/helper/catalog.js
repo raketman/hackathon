@@ -38,5 +38,8 @@ export default {
     },
     getUserSection() {
         return 2;
-    }
+    },
+    getBonusCatalog() {
+        return 18;
+    },
 }

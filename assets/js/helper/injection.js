@@ -9,5 +9,14 @@ export default {
             catalogTitle: "Пользователи",
             recordId: id ? id :store.getters.GET_TOKEN
         };
+    },
+
+    getEvent(id) {
+        return {
+            sectionId: Catalog.getStorageSection(),
+            catalogId: Catalog.getObjectEventCatalog(),
+            catalogTitle: "Выброс мусора",
+            recordId: id
+        }
     }
 }

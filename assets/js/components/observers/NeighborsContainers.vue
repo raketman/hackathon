@@ -47,24 +47,14 @@
                 // Получим найденный документ
                 let event = this.$store.getters.GET_EVENT;
 
-                if (!this.interval) {
-                    // Запустим инетрвал на проверку
-                    this.interval = setInterval(() => {
-                        // Мониторим выброс
-                        this.$store.dispatch('CHECK_EVENT')
-                    }, 1000);
-
-                    // Через 5 секунд пометиv успешным
-                    setTimeout(() => {
-                        // Подтверждим выбор
-                        this.close();
-                    }, 5000);
-                }
-
                 if (event.values && parseInt(event.values.status) === 2) {
-                    clearInterval(this.interval);
-                    this.$store.commit('RESET_TARGET');
-                    this.$router.push({name: 'bonus'});
+                    // Начислим балы
+                    this.$store.dispatch('ADD_BONUS').then(() => {
+                        clearInterval(this.interval);
+                        this.$store.commit('RESET_TARGET');
+                        this.$router.push({name: 'bonus'});
+                    });
+
                 }
 
             });
@@ -88,6 +78,20 @@
                 }
                 this.processing = true;
                 this.$store.dispatch('ADD_EVENT');
+
+                if (!this.interval) {
+                    // Запустим инетрвал на проверку
+                    this.interval = setInterval(() => {
+                        // Мониторим выброс
+                        this.$store.dispatch('CHECK_EVENT')
+                    }, 1000);
+
+                    // Через 5 секунд пометиv успешным
+                    setTimeout(() => {
+                        // Подтверждим выбор
+                        this.close();
+                    }, 5000);
+                }
             },
             stop() {
                 this.$store.commit('RESET_TARGET');
