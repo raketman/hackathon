@@ -4,6 +4,7 @@ import CatalogHelper from "../helper/catalog"
 export default {
     state: {
         number: window.localStorage.getItem('number'),
+        selectedPoint: window.localStorage.getItem('selectedPoint'),
         user: null,
         objects: []
     },
@@ -13,7 +14,10 @@ export default {
         },
         OBJECTS: (state) => {
             return state.objects;
-        }
+        },
+        SELECTED: (state) => {
+            return state.selectedPoint;
+        },
     },
     mutations: {
         SET_USER: (state, payload) => {
@@ -42,7 +46,7 @@ export default {
                 url: '/proxy/api/v1/catalogs/' + catalog + '/records/'+payload,
             })
                 .then((resp) => {
-                    console.log(resp.data);
+                    window.console.log(resp.data);
 
                     context.commit('SET_USER', resp.data);
                 })
@@ -67,14 +71,14 @@ export default {
                     values: data
                 }
             })
-                .then((resp) => {
+                .then(() => {
                     context.state.user.coords = payload;
 
                     context.commit('SET_USER', context.state.user);
                 })
                 .catch(err => {
                     // eslint-disable-next-line
-                    console.warn(err);
+                    window.console.warn(err);
                 })
 
         },
@@ -85,7 +89,7 @@ export default {
                 url: '/proxy/api/v1/catalogs/' + catalog + '/records?timezoneOffset=180&limit=100',
             })
                 .then((resp) => {
-                    console.log(resp.data);
+                    window.console.log(resp.data);
 
                     context.commit('SET_OBJECTS', CatalogHelper.parseByCatalog(resp.data, catalog, 1));
                 })

@@ -72,12 +72,12 @@ export default {
         --shadow: 0 4px 10px rgba(91, 99, 117, .05);
 
         --text-caps: .2em;
-        --base-ffamily: Montserrat, sans-serif;
+        --base-ffamily: SF Compact Display, sans-serif;
 
         --text: 12px/15px var(--base-ffamily);
         --bold-text: bold 12px/15px var(--base-ffamily);
         --big-text: bold 14px/17px var(--base-ffamily);
-        --title: bold 20px/27px var(--base-ffamily);
+        --title: 17px/20px var(--base-ffamily);
         --big-title: bold 22px/27px var(--base-ffamily);
     }
 
@@ -93,9 +93,8 @@ export default {
 */
     }
     .main-app {
-        width: 375px;
+        width: 414px;
         display: flex;
-        padding: 0 20px;
         min-height: 100vh;
         position: relative;
         background: #F8F8F8;
@@ -133,6 +132,7 @@ export default {
     }
     .title {
         padding: 0;
+        color: var(--bg-modal);
         text-align: center;
         font: var(--title);
     }

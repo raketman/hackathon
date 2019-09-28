@@ -23,5 +23,6 @@
     .top-block {
         z-index: 10;
         position: relative;
+        background: #7B1EF5;
     }
 </style>

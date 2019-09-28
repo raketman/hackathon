@@ -3,10 +3,11 @@
         <title-block title="Карта" />
         <yandex-map-ui v-if="showMap" class="map"></yandex-map-ui>
 
-
+        <!--
         <div v-for="object in getObjects" :key="object.id" class="object-item">
-            <div v-on:click="selectOBject(object)">Выбрать</div>
+            <div v-on:click="selectObject(object)">Выбрать</div>
         </div>
+        -->
 
 
         <neighbors-containers></neighbors-containers>
@@ -31,10 +32,8 @@
                 return this.$store.getters.OBJECTS;
             },
         },
-        created() {
-        },
         methods: {
-            selectOBject(object) {
+            selectObject(object) {
                 this.$store.commit('SET_TARGET', object);
             },
             loadObject() {
@@ -45,15 +44,22 @@
                 });
             },
         },
+        created() {
+        },
         mounted() {
             this.showMap = true;
             this.loadObject();
         },
     }
 </script>
-<style>
+
+<style scoped>
     .map{
+        top: 0;
+        left: 0;
+        z-index: 0;
         width: 100%;
-        height: 300px;
+        height: 100%;
+        position: absolute;
     }
 </style>
