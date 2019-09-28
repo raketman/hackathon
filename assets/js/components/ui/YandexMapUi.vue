@@ -73,6 +73,7 @@
                 this.hideCopyright();
                 this.userLocation();
                 this.addPoints();
+                this.subscribeEvent();
 
                 /*
                 userCircle.events.add('geometrychange', () => {
@@ -168,7 +169,7 @@
                 }, 2000);
                 //endregion
             },
-            addPoints() {
+            subscribeEvent() {
                 // Подпишемся на получения выбранной точки
                 this.$store.subscribe( (mutation, state) => {
                     if (this.selectedPlacemark || !this.map) {
@@ -182,7 +183,17 @@
                     this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
                 });
 
+                // Подпишемся на получения выбранной точки
+                this.$store.subscribe( (mutation, state) => {
+                    if (mutation.type !== 'RESET_TARGET') {
+                        return;
+                    }
 
+                    // Выберем нужную
+                    this.resetMap();
+                });
+            },
+            addPoints() {
                 //region Пункт сбора
                 const myCollection = new window.ymaps.GeoObjectCollection();
                 this.getObjects.forEach(point => {
@@ -208,6 +219,12 @@
                     this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
                 }
 
+            },
+            resetMap() {
+                this.selectedPlacemark = null;
+                this.map.geoObjects.removeAll();
+
+                this.addPoints();
             },
             selectPoint(placemark) {
                 if (this.selectedPlacemark) {
