@@ -32,6 +32,7 @@
         data: () => ({
             inArea: null,
             processing: false,
+            bonusProcessing: false,
             interval: false
 
         }),
@@ -47,10 +48,11 @@
                 // Получим найденный документ
                 let event = this.$store.getters.GET_EVENT;
 
-                if (event.values && parseInt(event.values.status) === 2) {
+                if (event.values && parseInt(event.values.status) === 2 && !this.bonusProcessing) {
+                    this.bonusProcessing = true;
+                    clearInterval(this.interval);
                     // Начислим балы
                     this.$store.dispatch('ADD_BONUS').then(() => {
-                        clearInterval(this.interval);
                         this.$store.commit('RESET_TARGET');
                         this.$router.push({name: 'bonus'});
                     });
