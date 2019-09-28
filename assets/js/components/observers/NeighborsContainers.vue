@@ -4,6 +4,8 @@
         <div v-html="this.$store.getters.GET_TARGET.title"></div>
 
 
+        <div v-html="coords"></div>
+
         <div class="payment a-bottom" v-if="!processing">
             <button-field :class="{'btn-action': inArea}" @click="start"title="Открыть" />
         </div>
@@ -36,7 +38,8 @@
         data: () => ({
             processing: false,
             bonusProcessing: false,
-            interval: false
+            interval: false,
+            coords: null
 
         }),
         created() {

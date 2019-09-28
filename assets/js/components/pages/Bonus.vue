@@ -24,7 +24,7 @@
             TitleBlock
         },
         data: () => ({
-            bonusLimit: 50
+            bonusLimit: 700
         }),
         computed: {
             getObjects() {
