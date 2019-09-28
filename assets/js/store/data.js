@@ -1,7 +1,5 @@
 import axios from "./axios";
 import CatalogHelper from "../helper/catalog"
-import Injection from "../helper/injection";
-import moment from 'moment'
 
 export default {
     state: {
@@ -16,9 +14,6 @@ export default {
         },
         OBJECTS: (state) => {
             return state.objects;
-        },
-        SELECTED: (state) => {
-            return state.selectedPoint;
         },
     },
     mutations: {
@@ -58,32 +53,6 @@ export default {
                 })
 
         },
-        SET_USER_COORDS: (context, payload) => {
-            let catalog = 13;
-
-            let data = {
-                5: payload.latitude,
-                6: payload.longitude
-            };
-
-            return axios({
-                method: 'put',
-                url: '/proxy/api/v1/catalogs/' + catalog + '/records/' + context.state.user.id + '?timezoneOffset=180',
-                data: {
-                    values: data
-                }
-            })
-                .then(() => {
-                    context.state.user.coords = payload;
-
-                    context.commit('SET_USER', context.state.user);
-                })
-                .catch(err => {
-                    // eslint-disable-next-line
-                    window.console.warn(err);
-                })
-
-        },
         SET_OBJECTS: (context) => {
             let catalog = CatalogHelper.getObjectCatalog();
             return axios({
@@ -99,37 +68,7 @@ export default {
                     // eslint-disable-next-line
                     console.warn(err);
                 })
-        },
-        ADD_BONUS: (context, payload) => {
-            let min = Math.ceil(1);
-            let max = Math.floor(5);
-
-            let catalog = CatalogHelper.getBonusCatalog();
-            let data = {
-                7:  [Injection.getEvent(context.getters.GET_EVENT.id)],
-                2: [Injection.getUser()],
-                4: Math.floor(Math.random() * (max - min))  + min,
-                3: moment().format('YYYY:MM DD HH:mm:ss'),
-                6: 1
-            };
-
-            return axios({
-                method: 'post',
-                url: '/proxy/api/v1/catalogs/' + catalog + '/records?timezoneOffset=180',
-                data: {
-                    values: data
-                }
-            })
-                .then((resp) => {
-                    console.log(resp.data);
-                    context.commit('INIT_LAST_BONUS', resp.data.id);
-                })
-                .catch(err => {
-                    // eslint-disable-next-line
-                    console.warn(err);
-                })
-
-        },
+        }
     },
 };
 

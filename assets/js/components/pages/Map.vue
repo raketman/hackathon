@@ -2,27 +2,17 @@
     <div class="row">
         <title-block title="Карта" />
         <yandex-map-ui v-if="showMap" class="map"></yandex-map-ui>
-
-        <!--
-        <div v-for="object in getObjects" :key="object.id" class="object-item">
-            <div v-on:click="selectObject(object)" v-html="object.title"></div>
-        </div>
-        -->
-
-
-        <neighbors-containers></neighbors-containers>
     </div>
 </template>
 
 <script>
     import YandexMapUi from '../ui/YandexMapUi';
     import TitleBlock from '../block/Title'
-    import NeighborsContainers from '../observers/NeighborsContainers';
 
     export default {
         name: 'Map',
         components: {
-            YandexMapUi, TitleBlock, NeighborsContainers
+            YandexMapUi, TitleBlock
         },
         data: () => ({
             showMap: false

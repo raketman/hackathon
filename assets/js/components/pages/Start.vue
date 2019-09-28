@@ -3,23 +3,24 @@
         <title-block title="Стартовая" />
 
         <div class="payment a-bottom">
-            <button-field  @click="startPayment" title='Выбросить мусор' />
+            <button-field  @click="startGarbage" title='Выбросить мусор' />
+        </div>
+
+        <div class="payment a-bottom">
+            <button-field  @click="connectGarbage" title='Присоединиться' />
         </div>
     </div>
 </template>
 
 <script>
-    import Modal from "../ui/Modal";
     import TitleBlock from '../block/Title';
     import ButtonField from '../forms/Button';
-
 
     export default {
         name: 'Object',
         components: {
             TitleBlock,
             ButtonField,
-            Modal,
         },
         data: () => ({
             showAddModal: false,
@@ -28,17 +29,11 @@
         computed: {
         },
         methods: {
-            selectObject(object) {
-                this.$store.commit('CHANGE_SELECTED_OBJECT', object);
-            },
-            deleteObject(object) {
-                this.$store.dispatch('DELETE_OBJECT', object);
-            },
-            startPayment() {
-                if (parseInt(this.getPaymentSum)  === 0) {
-                    return;
-                }
+            startGarbage() {
                 this.$router.push({ name: 'map' });
+            },
+            connectGarbage() {
+                this.$router.push({ name: 'statement' });
             },
         },
         mounted() {

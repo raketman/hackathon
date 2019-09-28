@@ -4,17 +4,20 @@ export default {
     parseByCatalog(data, catalog, isArray) {
         if(isArray) {
             for(let i in data) {
-                data[i] = this.parseByCatalog(data[i], catalog, 0);
+                if (data.hasOwnProperty(i)) {
+                    data[i] = this.parseByCatalog(data[i], catalog, 0);
+                }
             }
         } else {
             for (let j in data.values) {
+                if (data.values.hasOwnProperty(j)) {
+                    let code = idTransformator.getCode(j, catalog);
+                    if (!code) {
+                        continue;
+                    }
 
-                let code = idTransformator.getCode(j, catalog);
-                if (!code) {
-                    continue;
+                    data.values[ code ] = data.values[ j ];
                 }
-
-                data.values[code] = data.values[j];
             }
         }
 
@@ -42,4 +45,13 @@ export default {
     getBonusCatalog() {
         return 18;
     },
+    getStatementSection() {
+        return 5;
+    },
+    getStatementCatalog() {
+        return 19;
+    },
+    getStatementOwnerCatalog() {
+        return 20;
+    }
 }
