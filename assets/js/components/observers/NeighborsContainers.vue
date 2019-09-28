@@ -28,17 +28,18 @@
             CoordsHelper, ButtonField
         },
         props: {
+            inArea: {
+                type: Boolean,
+                default: false,
+            },
         },
         data: () => ({
-            inArea: null,
             processing: false,
             bonusProcessing: false,
             interval: false
 
         }),
         created() {
-            setInterval(this.state, 3000);
-
             // Подпишемся на появления события выброс мусора
             this.$store.subscribe( (mutation, state) => {
                 if (mutation.type !== 'SET_EVENT') {
@@ -97,24 +98,6 @@
             },
             stop() {
                 this.$store.commit('RESET_TARGET');
-            },
-            state() {
-                navigator.geolocation.getCurrentPosition( (position) => {
-                    var user = this.$store.getters.USER;
-
-                    if (!this.$store.getters.IS_TARGET) {
-                        this.inArea = false;
-                        return;
-                    }
-
-                    if (!CoordsHelper.inAreaContainer(position.coords, this.$store.getters.GET_TARGET)) {
-                        this.inArea = false;
-                        return;
-                    }
-
-                    this.inArea = true;
-
-                });
             }
         }
     }

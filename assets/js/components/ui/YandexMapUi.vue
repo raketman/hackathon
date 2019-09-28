@@ -9,7 +9,11 @@
        >
        </yandex-map>
 
-       <neighbors-containers></neighbors-containers>
+       <div style="bottom: 0px;position: absolute">
+         <neighbors-containers
+                 :inArea="inArea"
+         ></neighbors-containers>
+       </div>
    </div>
 </template>
 
@@ -21,6 +25,8 @@
         name: 'YandexMapUi',
         components: { yandexMap, NeighborsContainers },
         data: () => ({
+            firstIndicator: true,
+            pointInArea: false,
             loadMap: false,
             coords: [55.80, 49.10],
             controls: [
@@ -39,10 +45,13 @@
             me: null,
             map: null,
             route: null,
-            selectedPlacemark: null,
-            points: [],
+            selectedPlacemark: null, // this.$store.getters.SELECTED,
+            points: []
         }),
         computed: {
+            inArea() {
+                return this.pointInArea;
+            },
             getObjects() {
                 var points = [];
                 for (let key in this.$store.getters.OBJECTS) {
@@ -113,16 +122,18 @@
                         .then((result) => {
                             const coords = result.geoObjects.get(0).geometry.getCoordinates();
                             if (this.me) {
-                                const circle = new window.ymaps.Circle([coords, 10], null, {visible: false});
+                                const circle = new window.ymaps.Circle([coords, 30000], null, {visible: false});
                                 this.map.geoObjects.add(circle);
                                 const objects = window.ymaps.geoQuery(this.me);
                                 const moveCheck = objects.searchInside(circle);
+
                                 moveCheck.then(() => {
-                                    if (!moveCheck.getLength()) {
+                                    if (this.firstIndicator || !moveCheck.getLength()) {
+                                        this.firstIndicator = false;
                                         window.console.log('Идем...');
                                         this.me.get(0).geometry.setCoordinates(coords);
 
-                                        if (this.selectedPlacemark && this.route) {
+                                        if (this.$store.getters.IS_TARGET &&  this.route) {
                                             this.route.model.setReferencePoints([
                                                 coords,
                                                 this.selectedPlacemark
@@ -134,8 +145,10 @@
                                                 if (objectsInsideCircle.getLength()) {
                                                     window.console.log('Дошли!');
                                                     objectsInsideCircle.setOptions('preset', 'islands#redIcon');
+                                                    this.pointInArea = true;
                                                 } else {
                                                     window.console.log('Но еще не дошли =(');
+                                                    this.pointInArea = false;
                                                 }
                                             });
                                         }
@@ -173,6 +186,7 @@
                             e.get('coords'),
                         ];
                         this.selectedPlacemark = e.get('target');
+                        this.firstIndicator = true;
                         // Зафиксируем точку
                         this.$store.commit('SET_TARGET', point);
                         this.map.geoObjects.removeAll();
