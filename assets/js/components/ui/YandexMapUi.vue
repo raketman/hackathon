@@ -20,11 +20,13 @@
 <script>
     import { yandexMap } from 'vue-yandex-maps'
     import NeighborsContainers from '../observers/NeighborsContainers';
+    import IntervalStore from '../../helper/intervals'
 
     export default {
         name: 'YandexMapUi',
         components: { yandexMap, NeighborsContainers },
         data: () => ({
+            placemarkToPointId: {},
             firstIndicator: true,
             pointInArea: false,
             loadMap: false,
@@ -68,10 +70,13 @@
         },
         methods: {
             initHandler(myMap) {
+                IntervalStore.stop('map');
+
                 this.map = myMap;
                 this.hideCopyright();
                 this.userLocation();
                 this.addPoints();
+                this.subscribeEvent();
 
 /* Зачатки выбора типа маршрута (авто, общественный, пеший)
                 autoRouteItem.events.add('click', function (e) { changeRoutingMode('auto', e.get('target')); });
@@ -99,7 +104,7 @@
             },
             userLocation() {
                 //region Вычесляем положение пользователя каждые 2 сек
-                setInterval(() => {
+                var internal = setInterval(() => {
                     window.ymaps.geolocation
                         .get({
                             autoReverseGeocode : false, // отключить обратное геокодирование (тарифицируется)
@@ -151,7 +156,36 @@
                         })
                         //.catch((err) => window.console.log('Ошибка: ' + err));
                 }, 2000);
+
+                IntervalStore.save('map', internal);
                 //endregion
+            },
+            subscribeEvent() {
+                // Подпишемся на получения выбранной точки
+                this.$store.subscribe( (mutation, state) => {
+                    if (this.selectedPlacemark || !this.map) {
+                        return;
+                    }
+                    if (mutation.type !== 'SET_TARGET') {
+                        return;
+                    }
+
+                    // Выберем нужную
+                    this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
+                });
+
+                // Подпишемся на получения выбранной точки
+                this.$store.subscribe( (mutation, state) => {
+                    if (mutation.type !== 'RESET_TARGET') {
+                        return;
+                    }
+
+                    // Выберем нужную
+                    this.resetMap();
+
+                    // Поставим точки обртано
+                    this.addPoints();
+                });
             },
             addPoints() {
                 //region Пункт сбора
@@ -162,25 +196,42 @@
                         this.merge(this.getPointStyle(), this.getBaloonStyle())
                     );
                     placemark.events.add('click', (e) => {
-                        // e.stopPropagation();
-                        if (this.selectedPlacemark) {
-                            return;
-                        }
+                        this.selectPoint(placemark);
 
-                        const referencePoints = [
-                            this.me.get(0).geometry.getCoordinates(),
-                            e.get('coords'),
-                        ];
-                        this.selectedPlacemark = e.get('target');
-                        this.firstIndicator = true;
                         // Зафиксируем точку
                         this.$store.commit('SET_TARGET', point);
-                        this.map.geoObjects.removeAll();
-                        this.createRoute(referencePoints);
                     });
                     myCollection.add(placemark);
+
+                    this.placemarkToPointId[point.id] = placemark;
                 });
+
                 this.map.geoObjects.add(myCollection);
+
+                if (this.$store.getters.IS_TARGET) {
+                    // Выберем нужную
+                    this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
+                }
+
+            },
+            resetMap() {
+                this.selectedPlacemark = null;
+                this.map.geoObjects.removeAll();
+            },
+            selectPoint(placemark) {
+                if (this.selectedPlacemark) {
+                    return;
+                }
+
+                const referencePoints = [
+                    placemark.coords,//this.me.get(0).geometry.getCoordinates(),
+                    placemark.coords,
+                ];
+                this.selectedPlacemark = placemark;
+                this.firstIndicator = true;
+
+                this.map.geoObjects.removeAll();
+                this.createRoute(referencePoints);
             },
             createRoute(referencePoints) {
                 const RouteModel = {
