@@ -1,14 +1,19 @@
 <template>
     <div v-if="isHaveTarget" class="modal" tabindex="-1" role="dialog">
+        Выбрано:
+        <div v-html="this.$store.getters.GET_TARGET.title"></div>
 
 
-
-        <div class="payment a-bottom">
+        <div class="payment a-bottom" v-if="!processing">
             <button-field :class="{'btn-action': inArea}" @click="start"title="Открыть" />
         </div>
 
-        <div class="payment a-bottom">
+        <div class="payment a-bottom" v-if="!processing">
             <button-field  @click="stop" title="Отменить" />
+        </div>
+
+        <div class="payment a-bottom" v-if="processing">
+            <button-field  @click="close" title="Закрыть" />
         </div>
     </div>
 </template>
@@ -26,14 +31,14 @@
         },
         data: () => ({
             inArea: null,
+            processing: false,
+            interval: false
 
         }),
         created() {
             setInterval(this.state, 3000);
 
-
-            var interval;
-            // Поодпишется на ищщзмеггегй
+            // Подпишемся на появления события выброс мусора
             this.$store.subscribe( (mutation, state) => {
                 if (mutation.type !== 'SET_EVENT') {
                     return;
@@ -42,9 +47,9 @@
                 // Получим найденный документ
                 let event = this.$store.getters.GET_EVENT;
 
-                if (!interval) {
+                if (!this.interval) {
                     // Запустим инетрвал на проверку
-                    interval = setInterval(() => {
+                    this.interval = setInterval(() => {
                         // Мониторим выброс
                         this.$store.dispatch('CHECK_EVENT')
                     }, 1000);
@@ -52,12 +57,12 @@
                     // Через 5 секунд пометиv успешным
                     setTimeout(() => {
                         // Подтверждим выбор
-                        this.$store.dispatch('APPROVED_EVENT')
+                        this.close();
                     }, 5000);
                 }
 
                 if (event.values && parseInt(event.values.status) === 2) {
-                    clearInterval(interval);
+                    clearInterval(this.interval);
                     this.$store.commit('RESET_TARGET');
                     this.$router.push({name: 'bonus'});
                 }
@@ -73,7 +78,15 @@
             }
         },
         methods: {
+            close() {
+                // Подтверждим выбор
+                this.$store.dispatch('APPROVED_EVENT')
+            },
             start() {
+                if (!this.inArea) {
+                    return;
+                }
+                this.processing = true;
                 this.$store.dispatch('ADD_EVENT');
             },
             stop() {

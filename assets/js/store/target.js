@@ -1,6 +1,7 @@
 import axios from "./axios";
 import Catalog from "../helper/catalog"
 import moment from 'moment'
+import Injection from '../helper/injection'
 
 export default {
     state: {
@@ -28,6 +29,7 @@ export default {
     mutations: {
         SET_TARGET: (state, payload) => {
             state.target = payload;
+            state.target_id = payload.id;
             window.localStorage.setItem('target_id', payload.id);
         },
         RESET_TARGET: (state) => {
@@ -129,12 +131,7 @@ export default {
                     catalogTitle: "Точки сбора",
                     recordId: context.state.target_id
                 }],
-                3: [{
-                    sectionId: Catalog.getUserSection(),
-                    catalogId: Catalog.getUserCatalog(),
-                    catalogTitle: "Пользователи",
-                    recordId: context.getters.GET_TOKEN
-                }],
+                3: [Injection.getUser()],
                 4: ["1"],
                 5: moment().format('YYYY:MM DD HH:mm:ss')
             };
