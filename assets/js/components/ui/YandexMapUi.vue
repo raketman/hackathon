@@ -1,5 +1,5 @@
 <template>
-   <div class="">
+   <div class="map-wrp flex-column">
        <yandex-map v-if="loadMap" class="map"
                    :settings="settings"
                    :controls="controls"
@@ -296,14 +296,14 @@
             },
         },
         created() {
-             window.ymaps.ready(() => {
-                 this.loadMap = true;
-            //     window.ymaps.geolocation.get({
-            //         autoReverseGeocode: false, // отключить обратное геокодирование (тарифицируется)
-            //     }).then(function (res) {
-            //         this.coords = res.geoObjects.get(0).geometry.getCoordinates();
-            //     });
-             });
+            window.ymaps.ready(() => {
+                this.loadMap = true;
+                // window.ymaps.geolocation.get({
+                //     autoReverseGeocode: false, // отключить обратное геокодирование (тарифицируется)
+                // }).then(function (res) {
+                //     this.coords = res.geoObjects.get(0).geometry.getCoordinates();
+                // });
+            });
         },
         mounted() {
         },
@@ -311,12 +311,11 @@
 </script>
 
 <style scoped>
-    .map{
-        top: 64px;
-        left: 0;
-        z-index: 0;
+    .map-wrp {
+        flex: auto;
+    }
+    .map {
+        flex: auto;
         width: 100%;
-        height: calc(100% - 194px);
-        position: absolute;
     }
 </style>

@@ -185,7 +185,7 @@ export default {
         display: flex;
         font: var(--text);
         align-items: center;
-        color: var(--text-color);
+        color: var(--bg-modal);
     }
     .btn-logout:before {
         margin-right: 5px;

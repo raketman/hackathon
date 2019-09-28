@@ -1,11 +1,11 @@
 <template>
-    <div v-if="isHaveTarget" class="modal" tabindex="-1" role="dialog">
+    <div v-if="isHaveTarget" class="neighbors">
         Выбрано:
         <div v-html="this.$store.getters.GET_TARGET.title"></div>
 
 
         <div class="payment a-bottom" v-if="!processing">
-            <button-field :class="{'btn-action': inArea}" @click="start"title="Открыть" />
+            <button-field :class="{'btn-action': inArea}" @click="start" title="Открыть" />
         </div>
 
         <div class="payment a-bottom" v-if="!processing">
@@ -25,7 +25,7 @@
     export default {
         name: 'NeighborsContainers',
         components: {
-            CoordsHelper, ButtonField
+            ButtonField
         },
         props: {
         },
@@ -66,7 +66,7 @@
                 return this.$store.getters.IS_TARGET;
             },
             container() {
-                return thid.$store.getters.GET_TARGET;
+                return this.$store.getters.GET_TARGET;
             }
         },
         methods: {
@@ -100,8 +100,6 @@
             },
             state() {
                 navigator.geolocation.getCurrentPosition( (position) => {
-                    var user = this.$store.getters.USER;
-
                     if (!this.$store.getters.IS_TARGET) {
                         this.inArea = false;
                         return;
@@ -121,4 +119,8 @@
 </script>
 
 <style scoped>
+    .neighbors {
+        flex: 0 0 192px;
+        background: #fff;
+    }
 </style>

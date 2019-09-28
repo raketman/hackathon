@@ -1,7 +1,7 @@
 <template>
-    <div class="row">
+    <div class="row flex-column">
         <title-block title="Карта" />
-        <yandex-map-ui v-if="showMap" class="map"></yandex-map-ui>
+        <yandex-map-ui v-if="showMap"></yandex-map-ui>
     </div>
 </template>
 
@@ -44,12 +44,4 @@
 </script>
 
 <style scoped>
-    .map{
-        top: 0;
-        left: 0;
-        z-index: 0;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-    }
 </style>
