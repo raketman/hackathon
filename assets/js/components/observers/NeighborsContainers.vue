@@ -6,14 +6,14 @@
             <img class="point-image" v-bind:src="getPhoto"
                  :alt="container.title" />
             <div class="point-wrp">
-                <div class="point-name" v-html="container.title"></div>
+                <div class="point-name" v-html="container.title + getFullText"></div>
                 <div class="point-types" v-html="getType"></div>
             </div>
         </div>
 
         <div class="point-address" v-html="getAddress"></div>
 
-        <button-field :class="{'btn-action': inArea}" v-if="!processing" @click="start" title="Сдать мусор" />
+        <button-field :class="{'btn-action': isActive}" v-if="!processing" @click="start" title="Сдать мусор" />
     </div>
 </template>
 
@@ -21,6 +21,7 @@
     import ButtonField from '../forms/Button'
     import IntervalStore from '../../helper/intervals'
     import ContainerType from '../../enums/container-types'
+    import ContinerHelper from '../../helper/container'
 
     export default {
         name: 'NeighborsContainers',
@@ -65,6 +66,12 @@
             });
         },
         computed: {
+            getFullText() {
+                return ContinerHelper.isFull(this.container) ? ' (полный)' : '';
+            },
+            isActive() {
+                return this.inArea && this.isHaveTarget && !ContinerHelper.isFull(this.container);
+            },
             isHaveTarget() {
                 return this.$store.getters.IS_TARGET;
             },
@@ -95,7 +102,7 @@
             },
 
             start() {
-                if (!this.inArea) {
+                if (!this.isActive) {
                     return;
                 }
                 this.processing = true;

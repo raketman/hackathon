@@ -23,6 +23,7 @@
     import { yandexMap } from 'vue-yandex-maps';
     import NeighborsContainers from '../observers/NeighborsContainers';
     import IntervalStore from '../../helper/intervals';
+    import ContinerHelper from '../../helper/container'
 
     export default {
         name: 'YandexMapUi',
@@ -234,8 +235,7 @@
                 let myCollection = new window.ymaps.GeoObjectCollection();
                 this.getObjects.forEach(point => {
                     const placemark = new window.ymaps.Placemark(point.coords, null,
-                        //this.getPointStyle()
-                        this.merge(this.getPointStyle(), this.getBaloonStyle())
+                        this.merge(this.getPointStyle('icon', ContinerHelper.isFull(point) ? '-disable' : ''), this.getBaloonStyle(point))
                     );
                     placemark.events.add('click', () => {
                         this.selectPoint(placemark);
@@ -344,13 +344,13 @@
                     ImageHref :   './img/map-me.svg',
                 }, prefix);
             },
-            getPointStyle(prefix = 'icon') {
+            getPointStyle(prefix = 'icon', disable = '') {
                 // prefix = icon || wayPointFinishIcon
                 return this.addPrefix({
                     ImageSize :   [ 20, 20 ],
                     ImageOffset : [ -10, -10 ],
                     Layout :      'default#image',
-                    ImageHref :   './img/map-to.svg',
+                    ImageHref :   './img/map-to' + disable +'.svg',
                 }, prefix);
             },
             getBaloonStyle() {
