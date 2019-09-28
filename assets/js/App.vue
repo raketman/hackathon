@@ -146,7 +146,6 @@ export default {
     .form-ctrl {
         width: 100%;
         padding: 10px 15px;
-        border-radius: var(--radius);
     }
 
     .btn {
@@ -154,10 +153,11 @@ export default {
         margin: 5px 0;
         cursor: pointer;
         text-align: center;
-        font: var(--big-text);
+        font: var(--title);
+        border-radius: var(--radius);
     }
     .btn-action {
-        color: var(--bg-modal);
+        color: #F1F3F5;
         background: var(--action-color);
     }
     .btn-dotted {
@@ -234,12 +234,15 @@ export default {
     }
 
     .form-ctrl {
-        margin: 0 0 15px;
+        padding: 0;
+        border: none;
+        font: var(--title);
+        line-height: 44px;
+        margin: 0 4px 15px;
         color: var(--text-color);
-        background: var(--bg-modal);
-        border: 1px solid rgba(91, 99, 117, .2);
+        border-bottom: 1px solid #DADADC;
     }
     ::placeholder {
-        opacity: .7;
+        color: #AEADBB;
     }
 </style>

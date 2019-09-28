@@ -1,9 +1,9 @@
 <template>
     <div class="row cover login-page">
-        <h2 class="login-title">Ключ</h2>
+        <h2 class="login-title">Эко</h2>
         <form v-if="isPhone" action="/login" method="post" @submit.prevent="authorized">
             <phone-field v-model="login" name="phone" required />
-            <button-field class="btn-action" title="Отправить код" />
+            <button-field class="btn-action" title="Получить код" />
         </form>
 
         <form v-if="isCode" action="/login" method="post" @submit.prevent="checkCode">
@@ -109,8 +109,8 @@
         color: var(--bg-modal);
     }
     .login-page form {
-        padding: 12px;
         background: #fff;
         border-radius: 8px;
+        padding: 22px 12px 7px;
     }
 </style>
