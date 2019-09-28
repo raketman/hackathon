@@ -30,7 +30,7 @@
             firstIndicator: true,
             pointInArea: false,
             loadMap: false,
-            coords: [55.80, 49.10],
+            coords: [56.610574, 49.291435],
             controls: [
                 'zoomControl',
                 // 'geolocationControl', // мое местоположение
@@ -186,10 +186,23 @@
                     // Поставим точки обртано
                     this.addPoints();
                 });
+
+                // Подпишемся на получения выбранной точки
+                this.$store.subscribe( (mutation, state) => {
+                    if (mutation.type !== 'SET_OBJECTS') {
+                        return;
+                    }
+
+                    // Чистим карту
+                    this.resetMap();
+
+                    // Поставим точки обртано
+                    this.addPoints();
+                });
             },
             addPoints() {
                 //region Пункт сбора
-                const myCollection = new window.ymaps.GeoObjectCollection();
+                let myCollection = new window.ymaps.GeoObjectCollection();
                 this.getObjects.forEach(point => {
                     const placemark = new window.ymaps.Placemark(point.coords, null,
                         //this.getPointStyle()
