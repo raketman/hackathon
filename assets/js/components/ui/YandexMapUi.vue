@@ -20,6 +20,7 @@
 <script>
     import { yandexMap } from 'vue-yandex-maps'
     import NeighborsContainers from '../observers/NeighborsContainers';
+    import IntervalStore from '../../helper/intervals'
 
     export default {
         name: 'YandexMapUi',
@@ -69,6 +70,8 @@
         },
         methods: {
             initHandler(myMap) {
+                IntervalStore.stop('map');
+
                 this.map = myMap;
                 this.hideCopyright();
                 this.userLocation();
@@ -115,7 +118,7 @@
             },
             userLocation() {
                 //region Вычесляем положение пользователя каждые 2 сек
-                setInterval(() => {
+                var internal = setInterval(() => {
                     window.ymaps.geolocation
                         .get({
                             autoReverseGeocode : false, // отключить обратное геокодирование (тарифицируется)
@@ -167,6 +170,8 @@
                         })
                         //.catch((err) => window.console.log('Ошибка: ' + err));
                 }, 2000);
+
+                IntervalStore.save('map', internal);
                 //endregion
             },
             subscribeEvent() {
@@ -191,6 +196,9 @@
 
                     // Выберем нужную
                     this.resetMap();
+
+                    // Поставим точки обртано
+                    this.addPoints();
                 });
             },
             addPoints() {
@@ -223,8 +231,6 @@
             resetMap() {
                 this.selectedPlacemark = null;
                 this.map.geoObjects.removeAll();
-
-                this.addPoints();
             },
             selectPoint(placemark) {
                 if (this.selectedPlacemark) {
