@@ -1,7 +1,7 @@
 <template>
     <div class="logout">
         <form action="" method="get" @submit.prevent="logout">
-            <button-field class="btn-link btn-logout" title="Выход" />
+            <button-field class="btn-link btn-logout" />
         </form>
     </div>
 </template>
@@ -28,6 +28,17 @@
 <style scoped>
 .logout {
     display: flex;
-    margin-left: auto;
+}
+
+.btn-logout {
+    width: auto;
+    display: flex;
+    font: var(--text);
+    align-items: center;
+    color: var(--bg-modal);
+}
+.btn-logout:before {
+    margin-right: 5px;
+    content: url('./../../assets/logout.svg');
 }
 </style>

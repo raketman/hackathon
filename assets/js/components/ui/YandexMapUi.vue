@@ -52,13 +52,13 @@
             },
             options: {
                 zoomControlSize: 'large', // Масштабирование компактно
+                autoFitToViewport: 'always', // автоматический ресайз при сложных вычислениях
             },
 
             me: null,
             map: null,
             route: null,
-            selectedPlacemark: null, // this.$store.getters.SELECTED,
-            points: []
+            selectedPlacemark: null,
         }),
         computed: {
             inArea() {
@@ -179,29 +179,18 @@
                         return;
                     }
 
-                    if (this.map) {
-                        this.map.container.fitToViewport();
-                    }
-
-
                     if (this.selectedPlacemark || !this.map) {
                         return;
                     }
 
                     // Выберем нужную
                     this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
-
-
                 });
 
                 // Подпишемся на получения выбранной точки
                 this.$store.subscribe( (mutation, state) => {
                     if (mutation.type !== 'RESET_TARGET') {
                         return;
-                    }
-
-                    if (this.map) {
-                        this.map.container.fitToViewport();
                     }
 
                     // Выберем нужную
@@ -235,7 +224,7 @@
                 let myCollection = new window.ymaps.GeoObjectCollection();
                 this.getObjects.forEach(point => {
                     const placemark = new window.ymaps.Placemark(point.coords, null,
-                        this.merge(this.getPointStyle('icon', ContinerHelper.isFull(point) ? '-disable' : ''), this.getBaloonStyle(point))
+                        this.getPointStyle('icon', ContinerHelper.isFull(point) ? '-disable' : '')
                     );
                     placemark.events.add('click', () => {
                         this.selectPoint(placemark);
@@ -410,7 +399,7 @@
 
 <style scoped>
     .map-wrp {
-        flex: auto;
+        height: calc(100vh - 64px);
     }
     .map-container {
         flex: auto;

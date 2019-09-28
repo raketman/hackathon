@@ -44,7 +44,6 @@ export default {
     body {
         margin: 0;
         display: flex;
-        min-height: 100vh;
         background: #E5E5E5;
         align-items: center;
         justify-content: center;
@@ -85,6 +84,8 @@ export default {
         box-sizing: border-box;
     }
     body {
+        height: 100vh;
+        overflow: hidden;
         color: var(--text-color);
         font: var(--text);
 /*
@@ -95,7 +96,7 @@ export default {
     .main-app {
         width: 414px;
         display: flex;
-        min-height: 100vh;
+        height: 100vh;
         position: relative;
         background: #F8F8F8;
         justify-content: stretch;
@@ -175,17 +176,6 @@ export default {
         color: var(--action-color);
     }
 
-    .btn-logout {
-        display: flex;
-        font: var(--text);
-        align-items: center;
-        color: var(--bg-modal);
-    }
-    .btn-logout:before {
-        margin-right: 5px;
-        content: url('./assets/logout.svg');
-    }
-
     .btn-dots {
         right: 0;
         margin: 0;
@@ -196,9 +186,6 @@ export default {
         position: absolute;
         align-items: center;
         justify-content: center;
-    }
-    .btn-dots:after {
-        content: url('./assets/dots.svg');
     }
 
     .btn-block {
