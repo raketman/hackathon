@@ -1,6 +1,6 @@
 <template>
     <div class="row flex-column">
-        <title-block title="Карта" />
+        <title-block title="Карта" :back="back"/>
         <yandex-map-ui v-if="showMap"></yandex-map-ui>
     </div>
 </template>
@@ -18,14 +18,8 @@
             showMap: false
         }),
         computed: {
-            getObjects() {
-                return this.$store.getters.OBJECTS;
-            },
         },
         methods: {
-            selectObject(object) {
-                this.$store.commit('SET_TARGET', object);
-            },
             loadObject() {
                 this.$store.commit('RESET_OBJECTS');
 
@@ -33,6 +27,13 @@
 
                 });
             },
+            back: function(){
+                if (this.$store.getters.IS_TARGET) {
+                    this.$store.commit('RESET_TARGET');
+                } else {
+                    this.$router.push({name: 'start'});
+                }
+            }
         },
         created() {
         },
