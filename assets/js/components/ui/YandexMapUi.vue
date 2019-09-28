@@ -104,61 +104,62 @@
             },
             userLocation() {
                 //region Вычесляем положение пользователя каждые 2 сек
-                var internal = setInterval(() => {
-                    window.ymaps.geolocation
-                        .get({
-                            autoReverseGeocode : false, // отключить обратное геокодирование (тарифицируется)
-                            mapStateAutoApply : true, // центруем и масштабируем автоматом
-                        })
-                        .then((result) => {
-                            const coords = result.geoObjects.get(0).geometry.getCoordinates();
-                            if (this.me) {
-                                const circle = new window.ymaps.Circle([coords, 30000], null, {visible: false});
-                                this.map.geoObjects.add(circle);
-                                const objects = window.ymaps.geoQuery(this.me);
-                                const moveCheck = objects.searchInside(circle);
-
-                                moveCheck.then(() => {
-                                    if (this.firstIndicator || !moveCheck.getLength()) {
-                                        this.firstIndicator = false;
-                                        window.console.log('Идем...');
-                                        this.me.get(0).geometry.setCoordinates(coords);
-
-                                        if (this.$store.getters.IS_TARGET &&  this.route) {
-                                            this.route.model.setReferencePoints([
-                                                coords,
-                                                this.selectedPlacemark
-                                            ]);
-
-                                            const objects = window.ymaps.geoQuery(this.selectedPlacemark);
-                                            const objectsInsideCircle = objects.searchInside(circle);
-                                            objectsInsideCircle.then(() => {
-                                                if (objectsInsideCircle.getLength()) {
-                                                    window.console.log('Дошли!');
-                                                    objectsInsideCircle.setOptions('preset', 'islands#redIcon');
-                                                    this.pointInArea = true;
-                                                } else {
-                                                    window.console.log('Но еще не дошли =(');
-                                                    this.pointInArea = false;
-                                                }
-                                            });
-                                        }
-                                    } else {
-                                        window.console.log('Стоим на месте =\'(');
-                                    }
-                                });
-                            } else {
-                                // меняем иконку (я) на свою
-                                result.geoObjects.get(0).options.set(this.getUserPointStyle());
-                                this.me = result.geoObjects;
-                                this.map.geoObjects.add(this.me);
-                            }
-                        })
-                        //.catch((err) => window.console.log('Ошибка: ' + err));
-                }, 2000);
+                var internal = setInterval(this.processMe, 2000);
 
                 IntervalStore.save('map', internal);
                 //endregion
+            },
+            processMe() {
+                window.ymaps.geolocation
+                    .get({
+                        autoReverseGeocode : false, // отключить обратное геокодирование (тарифицируется)
+                        mapStateAutoApply : true, // центруем и масштабируем автоматом
+                    })
+                    .then((result) => {
+                        const coords = result.geoObjects.get(0).geometry.getCoordinates();
+                        if (this.me) {
+                            const circle = new window.ymaps.Circle([coords, 30000], null, {visible: false});
+                            this.map.geoObjects.add(circle);
+                            const objects = window.ymaps.geoQuery(this.me);
+                            const moveCheck = objects.searchInside(circle);
+
+                            moveCheck.then(() => {
+                                if (this.firstIndicator || !moveCheck.getLength()) {
+                                    this.firstIndicator = false;
+                                    window.console.log('Идем...');
+                                    this.me.get(0).geometry.setCoordinates(coords);
+
+                                    if (this.$store.getters.IS_TARGET &&  this.route) {
+                                        this.route.model.setReferencePoints([
+                                            coords,
+                                            this.selectedPlacemark
+                                        ]);
+
+                                        const objects = window.ymaps.geoQuery(this.selectedPlacemark);
+                                        const objectsInsideCircle = objects.searchInside(circle);
+                                        objectsInsideCircle.then(() => {
+                                            if (objectsInsideCircle.getLength()) {
+                                                window.console.log('Дошли!');
+                                                objectsInsideCircle.setOptions('preset', 'islands#redIcon');
+                                                this.pointInArea = true;
+                                            } else {
+                                                window.console.log('Но еще не дошли =(');
+                                                this.pointInArea = false;
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    window.console.log('Стоим на месте =\'(');
+                                }
+                            });
+                        } else {
+                            // меняем иконку (я) на свою
+                            result.geoObjects.get(0).options.set(this.getUserPointStyle());
+                            this.me = result.geoObjects;
+                            this.map.geoObjects.add(this.me);
+                        }
+                    })
+                //.catch((err) => window.console.log('Ошибка: ' + err));
             },
             subscribeEvent() {
                 // Подпишемся на получения выбранной точки
@@ -183,6 +184,9 @@
                     // Выберем нужную
                     this.resetMap();
 
+                    //Добавим себя
+                    this.processMe();
+
                     // Поставим точки обртано
                     this.addPoints();
                 });
@@ -195,6 +199,9 @@
 
                     // Чистим карту
                     this.resetMap();
+
+                    //Добавим себя
+                    this.processMe();
 
                     // Поставим точки обртано
                     this.addPoints();
@@ -230,6 +237,7 @@
             resetMap() {
                 this.selectedPlacemark = null;
                 this.map.geoObjects.removeAll();
+                this.me = null;
             },
             selectPoint(placemark) {
                 if (this.selectedPlacemark) {
