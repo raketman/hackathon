@@ -5,7 +5,7 @@
 
         <!--
         <div v-for="object in getObjects" :key="object.id" class="object-item">
-            <div v-on:click="selectObject(object)">Выбрать</div>
+            <div v-on:click="selectObject(object)" v-html="object.title"></div>
         </div>
         -->
 

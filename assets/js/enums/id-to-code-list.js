@@ -43,63 +43,17 @@ export default {
                 code: 'size'
             },
 
-            // objects
+            // event
             {
-                catalog: 11,
-                id: 14,
-                code: 'title'
-            },
-            {
-                catalog: 11,
-                id: 13,
-                code: 'account'
-            },
-            // counters
-            {
-                catalog: 13,
-                id: 8,
-                code: 'number'
-            },
-            {
-                catalog: 13,
-                id: 9,
-                code: 'type'
-            },
-            {
-                catalog: 13,
-                id: 13,
+                catalog: 15,
+                id: 4,
                 code: 'status'
             },
             {
-                catalog: 13,
-                id: 8,
-                code: 'number'
+                catalog: 15,
+                id: 5,
+                code: 'created'
             },
-            {
-                catalog: 13,
-                id: 11,
-                code: 'valid'
-            },
-            {
-                catalog: 13,
-                id: 2,
-                code: 'valid_until'
-            },
-            {
-                catalog: 13,
-                id: 6,
-                code: 'current_value'
-            },
-            {
-                catalog: 13,
-                id: 18,
-                code: 'payment_value'
-            },
-            {
-                catalog: 13,
-                id: 7,
-                code: 'tariff'
-            }
         ]
     },
     getCode(id, catalog) {

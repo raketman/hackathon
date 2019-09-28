@@ -29,5 +29,17 @@ export default {
     },
     getUserLoginField() {
         return 2;
-    }
+    },
+    getObjectEventCatalog() {
+        return 15;
+    },
+    getStorageSection() {
+        return 3;
+    },
+    getUserSection() {
+        return 2;
+    },
+    getBonusCatalog() {
+        return 18;
+    },
 }

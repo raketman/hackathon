@@ -34,6 +34,7 @@
 
             me: null,
             map: null,
+            route: null,
             selectedPlacemark: null, // this.$store.getters.SELECTED,
             points: [
                 [55.612360, 49.299670],
@@ -102,9 +103,29 @@
                         .then((result) => {
                             const coords = result.geoObjects.get(0).geometry.getCoordinates();
                             if (this.me) {
-                                if (coords !== this.me.get(0).geometry.getCoordinates()) {
-                                    this.me.get(0).geometry.setCoordinates(coords);
-                                }
+                                const circle = new window.ymaps.Circle([coords, 10]);
+                                const objects = window.ymaps.geoQuery(this.me);
+                                const moveCheck = objects.searchInside(circle);
+                                moveCheck.then(() => {
+                                    if (moveCheck.getLength()) {
+                                        this.me.get(0).geometry.setCoordinates(coords);
+
+                                        if (this.selectedPlacemark && this.route) {
+                                            this.route.model.setReferencePoints([
+                                                coords,
+                                                this.selectedPlacemark.geometry.getCoordinates()
+                                            ]);
+
+                                            const objects = window.ymaps.geoQuery(this.selectedPlacemark);
+                                            const objectsInsideCircle = objects.searchInside(circle);
+                                            objectsInsideCircle.then(() => {
+                                                if (objectsInsideCircle.getLength()) {
+                                                    objectsInsideCircle.setOptions('preset', 'islands#redIcon');
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
                             } else {
                                 // меняем иконку (я) на свою
                                 result.geoObjects.get(0).options.set(this.getUserPointStyle());
@@ -112,13 +133,12 @@
                                 this.map.geoObjects.add(this.me);
                             }
                         })
-                        .catch((err) => window.console.log('Ошибка: ' + err));
+                        //.catch((err) => window.console.log('Ошибка: ' + err));
                 }, 2000);
                 //endregion
             },
             addPoints() {
                 //region Пункт сбора
-                let route = null;
                 const myCollection = new window.ymaps.GeoObjectCollection();
                 this.points.forEach(coords => {
                     const placemark = new window.ymaps.Placemark(coords, null,
@@ -131,49 +151,56 @@
                             return;
                         }
 
-                        const toCoords = e.get('coords');
-                        const fromCoords = this.me.get(0).geometry.getCoordinates();
+                        this.createRoute([
+                            this.me.get(0).geometry.getCoordinates(),
+                            e.get('coords'),
+                        ]);
                         this.selectedPlacemark = e.get('target');
                         this.map.geoObjects.removeAll();
-
-                        const RouteModel = {
-                            referencePoints: [ fromCoords, toCoords ],
-                            params: this.merge(
-                                this.merge(
-                                    this.getPointStyle('wayPointFinishIcon'),
-                                    this.getUserPointStyle('wayPointStartIcon')
-                                ),
-                                {
-                                    results: 1, // Максимальное число маршрутов
-                                    routingMode: 'pedestrian', // Тип маршрутизации: auto|masstransit|pedestrian|bicycle
-                                    boundsAutoApply: true, //
-                                    reverseGeocoding: false, //
-
-                                    // Внешний вид линии маршрута.
-                                    routeStrokeWidth: 3,
-                                    routeStrokeColor: '#000088',
-                                    routeActiveStrokeWidth: 4,
-                                    routeActiveStrokeColor: '#809CFF',
-
-                                    // Внешний вид линии пешеходного маршрута.
-                                    routeActivePedestrianSegmentStrokeStyle: 'solid',
-                                    routeActivePedestrianSegmentStrokeColor: '#809CFF',
-                                }
-                            ),
-                        };
-                        window.console.dir(RouteModel);
-                        /**
-                         * Создание мультимаршрута.
-                         * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/multiRouter.MultiRoute.xml
-                         */
-                        route = new window.ymaps.multiRouter.MultiRoute(RouteModel);
-                        this.map.geoObjects.add(route);
                     });
                     myCollection.add(placemark);
                 });
                 this.map.geoObjects.add(myCollection);
+            },
+            createRoute(referencePoints) {
+                const RouteModel = {
+                    referencePoints: referencePoints,
+                    params: this.merge(
+                        this.merge(
+                            this.getPointStyle('wayPointFinishIcon'),
+                            this.getUserPointStyle('wayPointStartIcon')
+                        ),
+                        {
+                            results: 1, // Максимальное число маршрутов
+                            routingMode: 'pedestrian', // Тип маршрутизации: auto|masstransit|pedestrian|bicycle
+                            boundsAutoApply: true, //
+                            reverseGeocoding: false, //
 
-                this.onPointClick(myCollection);
+                            // Внешний вид линии маршрута.
+                            routeStrokeWidth: 3,
+                            routeStrokeColor: '#000088',
+                            routeActiveStrokeWidth: 4,
+                            routeActiveStrokeColor: '#809CFF',
+
+                            // Внешний вид линии пешеходного маршрута.
+                            routeActivePedestrianSegmentStrokeStyle: 'solid',
+                            routeActivePedestrianSegmentStrokeColor: '#809CFF',
+                        }
+                    ),
+                };
+                /**
+                 * Создание мультимаршрута.
+                 * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/multiRouter.MultiRoute.xml
+                 */
+                this.route = new window.ymaps.multiRouter.MultiRoute(RouteModel);
+                this.map.geoObjects.add(this.route);
+                /*
+                this.route.events.add('boundschange', () => {
+                    this.map.setBounds(this.route.getBounds(), {
+                        checkZoomRange: true,
+                    });
+                });
+                */
             },
 
             merge(object1, object2) {
