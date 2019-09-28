@@ -53,8 +53,8 @@ export default {
 
         },
         ADD_BONUS: (context, payload) => {
-            let min = Math.ceil(1);
-            let max = Math.floor(5);
+            let min = Math.ceil(100);
+            let max = Math.floor(500);
 
             let catalog = CatalogHelper.getBonusCatalog();
             let data = {

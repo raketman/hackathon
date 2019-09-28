@@ -4,6 +4,8 @@
         <div v-html="this.$store.getters.GET_TARGET.title"></div>
 
 
+        <div v-html="coords"></div>
+
         <div class="payment a-bottom" v-if="!processing">
             <button-field :class="{'btn-action': inArea}" @click="start" title="Открыть" />
         </div>
@@ -19,7 +21,6 @@
 </template>
 
 <script>
-    import CoordsHelper from '../../helper/coordinate-helper';
     import ButtonField from '../forms/Button'
 
     export default {
@@ -28,17 +29,18 @@
             ButtonField
         },
         props: {
+            inArea: {
+                type: Boolean,
+                default: false,
+            },
         },
         data: () => ({
-            inArea: null,
             processing: false,
             bonusProcessing: false,
-            interval: false
-
+            interval: false,
+            coords: null
         }),
         created() {
-            setInterval(this.state, 3000);
-
             // Подпишемся на появления события выброс мусора
             this.$store.subscribe( (mutation, state) => {
                 if (mutation.type !== 'SET_EVENT') {
@@ -97,22 +99,6 @@
             },
             stop() {
                 this.$store.commit('RESET_TARGET');
-            },
-            state() {
-                navigator.geolocation.getCurrentPosition( (position) => {
-                    if (!this.$store.getters.IS_TARGET) {
-                        this.inArea = false;
-                        return;
-                    }
-
-                    if (!CoordsHelper.inAreaContainer(position.coords, this.$store.getters.GET_TARGET)) {
-                        this.inArea = false;
-                        return;
-                    }
-
-                    this.inArea = true;
-
-                });
             }
         }
     }
