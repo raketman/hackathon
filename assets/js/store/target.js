@@ -67,7 +67,7 @@ export default {
         CHECK_EVENT: (context, payload) => {
             let catalog = Catalog.getObjectEventCatalog();
 
-            if (!context.state.target_id) {
+            if (!context.state.target_id || !context.state.event) {
                 return
             }
 
@@ -90,7 +90,7 @@ export default {
         APPROVED_EVENT: (context, payload) => {
             let catalog = Catalog.getObjectEventCatalog();
 
-            if (!context.state.target_id) {
+            if (!context.state.target_id || !context.state.event) {
                 return
             }
 

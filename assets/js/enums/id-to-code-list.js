@@ -54,6 +54,18 @@ export default {
                 id: 5,
                 code: 'created'
             },
+
+            // bonuse
+            {
+                catalog: 18,
+                id: 3,
+                code: 'datetime'
+            },
+            {
+                catalog: 18,
+                id: 4,
+                code: 'value'
+            },
         ]
     },
     getCode(id, catalog) {
