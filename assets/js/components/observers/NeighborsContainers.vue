@@ -13,18 +13,13 @@
 
         <div class="point-address">Возле Эдельвейс, советская, 92, c. Столбище </div>
 
-        <button-field :class="{'btn-action': inArea}" @click="start" title="Сдать мусор" />
-
-        <!--
-        <div class="payment a-bottom" v-if="processing">
-            <button-field  @click="close" title="Закрыть" />
-        </div>
-        -->
+        <button-field :class="{'btn-action': inArea}" v-if="!processing" @click="start" title="Сдать мусор" />
     </div>
 </template>
 
 <script>
     import ButtonField from '../forms/Button'
+    import IntervalStore from '../../helper/intervals'
 
     export default {
         name: 'NeighborsContainers',
@@ -44,6 +39,8 @@
             coords: null
         }),
         created() {
+            IntervalStore.stop('check_event');
+
             // Подпишемся на появления события выброс мусора
             this.$store.subscribe( (mutation, state) => {
                 if (mutation.type !== 'SET_EVENT') {
@@ -75,12 +72,11 @@
             }
         },
         methods: {
-            /*
             close() {
                 // Подтверждим выбор
                 this.$store.dispatch('APPROVED_EVENT')
             },
-            */
+
             start() {
                 if (!this.inArea) {
                     return;
@@ -95,6 +91,8 @@
                         this.$store.dispatch('CHECK_EVENT')
                     }, 1000);
 
+                    IntervalStore.save('check_event', this.interval);
+
                     // Через 5 секунд пометиv успешным
                     setTimeout(() => {
                         // Подтверждим выбор
@@ -103,6 +101,8 @@
                 }
             },
             stop() {
+                IntervalStore.stop('check_event');
+
                 this.$store.commit('RESET_TARGET');
             }
         }

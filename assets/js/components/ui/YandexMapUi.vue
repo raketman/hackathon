@@ -173,19 +173,24 @@
             subscribeEvent() {
                 // Подпишемся на получения выбранной точки
                 this.$store.subscribe( (mutation, state) => {
-                    if (this.selectedPlacemark || !this.map) {
+
+                    if (mutation.type !== 'SET_TARGET') {
                         return;
                     }
-                    if (mutation.type !== 'SET_TARGET') {
+
+                    if (this.map) {
+                        this.map.container.fitToViewport();
+                    }
+
+
+                    if (this.selectedPlacemark || !this.map) {
                         return;
                     }
 
                     // Выберем нужную
                     this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
 
-                    if (this.map) {
-                        this.map.container.fitToViewport();
-                    }
+
                 });
 
                 // Подпишемся на получения выбранной точки
@@ -245,7 +250,7 @@
 
                 this.map.geoObjects.add(myCollection);
 
-                if (this.$store.getters.IS_TARGET) {
+                if (this.$store.getters.IS_TARGET && this.placemarkToPointId[this.$store.getters.GET_TARGET.id]) {
                     // Выберем нужную
                     this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
                 }
@@ -257,7 +262,7 @@
                 this.me = null;
             },
             selectPoint(placemark) {
-                if (this.selectedPlacemark) {
+                if (this.selectedPlacemark && placemark) {
                     return;
                 }
 
