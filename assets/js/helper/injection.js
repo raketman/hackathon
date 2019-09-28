@@ -11,6 +11,10 @@ export default {
         };
     },
 
+    getUserFilter(key, id) {
+        return 'filters[' + key + '][fieldId]=' + Catalog.getUserLoginField() + '&filters[' + key + '][value][0][recordId]=' + (id ? id :store.getters.GET_TOKEN) + '&filters[' + key + '][value][0][catalogId]=' + Catalog.getUserCatalog();
+    },
+
     getEvent(id) {
         return {
             sectionId: Catalog.getStorageSection(),

@@ -4,6 +4,7 @@ import Data from './data'
 import Auth from './auth'
 import Error from './error'
 import Target from './target'
+import Bonus from './bonus'
 
 Vue.use(Vuex);
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
         Data,
         Auth,
         Error,
-        Target
+        Target,
+        Bonus
     }
 });
