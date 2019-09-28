@@ -25,6 +25,7 @@
         name: 'YandexMapUi',
         components: { yandexMap, NeighborsContainers },
         data: () => ({
+            placemarkToPointId: {},
             firstIndicator: true,
             pointInArea: false,
             loadMap: false,
@@ -168,6 +169,20 @@
                 //endregion
             },
             addPoints() {
+                // Подпишемся на получения выбранной точки
+                this.$store.subscribe( (mutation, state) => {
+                    if (this.selectedPlacemark || !this.map) {
+                        return;
+                    }
+                    if (mutation.type !== 'SET_TARGET') {
+                        return;
+                    }
+
+                    // Выберем нужную
+                    this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
+                });
+
+
                 //region Пункт сбора
                 const myCollection = new window.ymaps.GeoObjectCollection();
                 this.getObjects.forEach(point => {
@@ -176,25 +191,38 @@
                         this.merge(this.getPointStyle(), this.getBaloonStyle())
                     );
                     placemark.events.add('click', (e) => {
-                        // e.stopPropagation();
-                        if (this.selectedPlacemark) {
-                            return;
-                        }
+                        this.selectPoint(placemark);
 
-                        const referencePoints = [
-                            this.me.get(0).geometry.getCoordinates(),
-                            e.get('coords'),
-                        ];
-                        this.selectedPlacemark = e.get('target');
-                        this.firstIndicator = true;
                         // Зафиксируем точку
                         this.$store.commit('SET_TARGET', point);
-                        this.map.geoObjects.removeAll();
-                        this.createRoute(referencePoints);
                     });
                     myCollection.add(placemark);
+
+                    this.placemarkToPointId[point.id] = placemark;
                 });
+
                 this.map.geoObjects.add(myCollection);
+
+                if (this.$store.getters.IS_TARGET) {
+                    // Выберем нужную
+                    this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
+                }
+
+            },
+            selectPoint(placemark) {
+                if (this.selectedPlacemark) {
+                    return;
+                }
+
+                const referencePoints = [
+                    placemark.coords,//this.me.get(0).geometry.getCoordinates(),
+                    placemark.coords,
+                ];
+                this.selectedPlacemark = placemark;
+                this.firstIndicator = true;
+
+                this.map.geoObjects.removeAll();
+                this.createRoute(referencePoints);
             },
             createRoute(referencePoints) {
                 const RouteModel = {
