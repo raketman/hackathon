@@ -1,8 +1,6 @@
 <template>
     <div class="col a-center top-block">
-        <!-- todo: Стрелка на зад!
-        <back v-if="true" />
-        -->
+        <div v-if="back" v-on:click="back" style="color:white"><---</div>
         <h3 class="title col">{{ title }}</h3>
         <logout v-if="this.$store.getters.IS_AUTHORIZED" />
     </div>
@@ -17,6 +15,7 @@
             Logout,
         },
         props: [
+            'back',
             'title',
         ],
     }
