@@ -1,6 +1,6 @@
 <template>
     <div class="row flex-column">
-        <title-block title="Карта" :back="back"/>
+        <title-block title="Карта" :back="back" :showBack="showBack" />
         <yandex-map-ui v-if="showMap"></yandex-map-ui>
     </div>
 </template>
@@ -18,6 +18,9 @@
             showMap: false
         }),
         computed: {
+            showBack: function(){
+                return this.$store.getters.IS_TARGET;
+            }
         },
         methods: {
             loadObject() {
@@ -33,7 +36,8 @@
                 } else {
                     this.$router.push({name: 'start'});
                 }
-            }
+            },
+
         },
         created() {
         },
