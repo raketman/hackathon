@@ -6,9 +6,11 @@
         <div v-html="getNewBonusValue"></div>
         Было
         <div v-html="getBonusValue"></div>
-        <div v-for="object in getObjects" :key="object.id" class="object-item">
-            <div v-html="object.title"></div>
-        </div>
+
+
+
+        <div v-if="showWin">Победа!</div>
+
 
     </div>
 </template>
@@ -22,8 +24,7 @@
             TitleBlock
         },
         data: () => ({
-            showMap: false,
-            bonusLimit: 100
+            bonusLimit: 50
         }),
         computed: {
             getObjects() {
@@ -44,6 +45,9 @@
                     value += bonus.values.value;
                 }
                 return value;
+            },
+            showWin() {
+                return this.bonusLimit < (this.getBonusValue + this.getNewBonusValue);
             }
         },
         created() {
