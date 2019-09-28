@@ -1,22 +1,25 @@
 <template>
     <div v-if="isHaveTarget" class="neighbors">
-        Выбрано:
-        <div v-html="this.$store.getters.GET_TARGET.title"></div>
+        <div class="close" @click="stop"></div>
 
-
-        <div v-html="coords"></div>
-
-        <div class="payment a-bottom" v-if="!processing">
-            <button-field :class="{'btn-action': inArea}" @click="start" title="Открыть" />
+        <div class="point-info">
+            <img class="point-image" src=""
+                 :alt="this.$store.getters.GET_TARGET.title" />
+            <div class="point-wrp">
+                <div class="point-name" v-html="this.$store.getters.GET_TARGET.title"></div>
+                <div class="point-types">Бумага, металл, стекло, пластик</div>
+            </div>
         </div>
 
-        <div class="payment a-bottom" v-if="!processing">
-            <button-field  @click="stop" title="Отменить" />
-        </div>
+        <div class="point-address">Возле Эдельвейс, советская, 92, c. Столбище </div>
 
+        <button-field :class="{'btn-action': inArea}" @click="start" title="Сдать мусор" />
+
+        <!--
         <div class="payment a-bottom" v-if="processing">
             <button-field  @click="close" title="Закрыть" />
         </div>
+        -->
     </div>
 </template>
 
@@ -72,10 +75,12 @@
             }
         },
         methods: {
+            /*
             close() {
                 // Подтверждим выбор
                 this.$store.dispatch('APPROVED_EVENT')
             },
+            */
             start() {
                 if (!this.inArea) {
                     return;
@@ -106,7 +111,58 @@
 
 <style scoped>
     .neighbors {
+        color: #000;
+        padding: 28px;
         flex: 0 0 192px;
         background: #fff;
+        font: var(--text);
+        position: relative;
+        box-shadow: inset 0 1px 0 rgba(38, 59, 97, .2);
+    }
+    .neighbors:before {
+        top: 8px;
+        left: 50%;
+        width: 28px;
+        height: 4px;
+        content: '';
+        display: block;
+        margin: 0 -14px;
+        position: absolute;
+        background: #DADADC;
+        border-radius: 10px;
+    }
+    .neighbors .close {
+        top: 12px;
+        right: 12px;
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        background: url('./../../assets/close.svg') no-repeat 80% 80% / cover;
+    }
+    .neighbors .point-info {
+        display: flex;
+
+    }
+    .neighbors .point-image {
+        width: 44px;
+        height: 44px;
+        border-radius: 4px;
+        margin: 0 12px 0 0;
+        background: #C4C4C4;
+        transform: matrix(-1, 0, 0, 1, 0, 0);
+    }
+    .neighbors .point-info {
+
+    }
+    .neighbors .point-name {
+        margin: 3px 0 4px;
+        font: var(--title);
+    }
+    .neighbors .point-types {
+        opacity: .4;
+        color: #0F1827;
+    }
+    .neighbors .point-address {
+        margin: 12px 0 15px;
     }
 </style>

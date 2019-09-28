@@ -1,30 +1,36 @@
 <template>
-   <div class="map-wrp flex-column">
-       <yandex-map v-if="loadMap" class="map"
-                   :settings="settings"
-                   :controls="controls"
-                   :coords="coords"
-                   :zoom="zoom"
-                   @map-was-initialized="initHandler"
-       >
-       </yandex-map>
+    <div class="map-wrp flex-column">
+        <div class="map-container">
+            <yandex-map v-if="loadMap" class="map"
+                        :settings="settings"
+                        :controls="controls"
+                        :options="options"
+                        :coords="coords"
+                        :zoom="zoom"
+                        @map-was-initialized="initHandler"
+            >
+            </yandex-map>
 
-       <div style="bottom: 0px;position: absolute">
-         <neighbors-containers
-                 :inArea="inArea"
-         ></neighbors-containers>
-       </div>
-   </div>
+            <button-field  @click="connectGarbage" title='Точка сбора' class="btn-map" />
+        </div>
+
+        <neighbors-containers :inArea="inArea" ></neighbors-containers>
+    </div>
 </template>
 
 <script>
-    import { yandexMap } from 'vue-yandex-maps'
+    import ButtonField from '../forms/Button';
+    import { yandexMap } from 'vue-yandex-maps';
     import NeighborsContainers from '../observers/NeighborsContainers';
-    import IntervalStore from '../../helper/intervals'
+    import IntervalStore from '../../helper/intervals';
 
     export default {
         name: 'YandexMapUi',
-        components: { yandexMap, NeighborsContainers },
+        components: {
+            yandexMap,
+            ButtonField,
+            NeighborsContainers,
+        },
         data: () => ({
             placemarkToPointId: {},
             firstIndicator: true,
@@ -42,6 +48,9 @@
                 lang: 'ru_RU',
                 coordorder: 'latlong',
                 version: '2.1',
+            },
+            options: {
+                zoomControlSize: 'large', // Масштабирование компактно
             },
 
             me: null,
@@ -173,12 +182,20 @@
 
                     // Выберем нужную
                     this.selectPoint(this.placemarkToPointId[this.$store.getters.GET_TARGET.id]);
+
+                    if (this.map) {
+                        this.map.container.fitToViewport();
+                    }
                 });
 
                 // Подпишемся на получения выбранной точки
                 this.$store.subscribe( (mutation, state) => {
                     if (mutation.type !== 'RESET_TARGET') {
                         return;
+                    }
+
+                    if (this.map) {
+                        this.map.container.fitToViewport();
                     }
 
                     // Выберем нужную
@@ -215,7 +232,7 @@
                         //this.getPointStyle()
                         this.merge(this.getPointStyle(), this.getBaloonStyle())
                     );
-                    placemark.events.add('click', (e) => {
+                    placemark.events.add('click', () => {
                         this.selectPoint(placemark);
 
                         // Зафиксируем точку
@@ -319,7 +336,7 @@
                     ImageSize :   [ 21, 31 ],
                     ImageOffset : [ -10, -15 ],
                     Layout :      'default#image',
-                    ImageHref :   '/img/map-me.svg',
+                    ImageHref :   './img/map-me.svg',
                 }, prefix);
             },
             getPointStyle(prefix = 'icon') {
@@ -328,7 +345,7 @@
                     ImageSize :   [ 20, 20 ],
                     ImageOffset : [ -10, -10 ],
                     Layout :      'default#image',
-                    ImageHref :   '/img/map-to.svg',
+                    ImageHref :   './img/map-to.svg',
                 }, prefix);
             },
             getBaloonStyle() {
@@ -366,6 +383,10 @@
                      balloonPanelMaxMapArea: 0,
                 }
             },
+
+            connectGarbage() {
+                this.$router.push({ name: 'statement' });
+            },
         },
         created() {
             window.ymaps.ready(() => {
@@ -386,8 +407,37 @@
     .map-wrp {
         flex: auto;
     }
-    .map {
+    .map-container {
         flex: auto;
         width: 100%;
+        position: relative;
+    }
+    .map {
+        width: 100%;
+        height: 100%;
+    }
+    .btn-map {
+        left: 20px;
+        bottom: 23px;
+        width: 114px;
+        height: 32px;
+        border: none;
+        border-radius: 4px;
+        position: absolute;
+        background: #AEADBB;
+
+        padding: 0;
+        color: #fff;
+        font-size: 13px;
+        line-height: 16px;
+        /*font-family: Roboto;*/
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-map:before {
+        margin: 0 5px 0 0;
+        content: url('./../../assets/plus.svg');
     }
 </style>

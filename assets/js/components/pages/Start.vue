@@ -6,9 +6,6 @@
             <button-field  @click="startGarbage" title='Выбросить мусор' />
         </div>
 
-        <div class="payment a-bottom">
-            <button-field  @click="connectGarbage" title='Присоединиться' />
-        </div>
     </div>
 </template>
 
@@ -31,9 +28,6 @@
         methods: {
             startGarbage() {
                 this.$router.push({ name: 'map' });
-            },
-            connectGarbage() {
-                this.$router.push({ name: 'statement' });
             },
         },
         mounted() {

@@ -74,7 +74,7 @@ export default {
         --text-caps: .2em;
         --base-ffamily: SF Compact Display, sans-serif;
 
-        --text: 12px/15px var(--base-ffamily);
+        --text: 13px/16px var(--base-ffamily);
         --bold-text: bold 12px/15px var(--base-ffamily);
         --big-text: bold 14px/17px var(--base-ffamily);
         --title: 17px/20px var(--base-ffamily);
