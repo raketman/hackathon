@@ -21,6 +21,7 @@
         data: () => ({
             coords: [55.80, 49.10],
             controls: [
+                'zoomControl',
                 // 'geolocationControl', // мое местоположение
                 // 'trafficControl', // пробки
             ],
@@ -169,7 +170,7 @@
                         this.merge(this.getPointStyle(), this.getBaloonStyle())
                     );
                     placemark.events.add('click', (e) => {
-                        e.stopPropagation();
+                        // e.stopPropagation();
                         if (this.selectedPlacemark) {
                             return;
                         }
@@ -268,7 +269,6 @@
                  * Создание собственного макета с помощью фабрики макетов.
                  * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/templateLayoutFactory.xml
                  */
-
                  const BalloonContentLayout = window.ymaps.templateLayoutFactory.createClass(
                      `<div class="my-balloon">
                          <a class="close" href="#">&times;</a>
