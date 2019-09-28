@@ -1,6 +1,6 @@
 <template>
-    <div class="row cover">
-        <h2 class="big-title">Вход в систему</h2>
+    <div class="row cover login-page">
+        <h2 class="login-title">Ключ</h2>
         <form v-if="isPhone" action="/login" method="post" @submit.prevent="authorized">
             <phone-field v-model="login" name="phone" required />
             <button-field class="btn-action" title="Отправить код" />
@@ -80,3 +80,37 @@
         },
     }
 </script>
+
+<style>
+    .login-page {
+        z-index: 1;
+        padding: 16px;
+        overflow: hidden;
+        position: relative;
+    }
+    .login-page:after {
+        content: '';
+        z-index: -1;
+        top: -100px;
+        left: -85px;
+        width: 570px;
+        height: 452px;
+        display: block;
+        position: absolute;
+
+        background: #7B1EF5;
+        border-radius: 30px;
+        transform: rotate(-30deg);
+    }
+    .login-title {
+        font-size: 20px;
+        margin: 20px 17px;
+        font-weight: normal;
+        color: var(--bg-modal);
+    }
+    .login-page form {
+        padding: 12px;
+        background: #fff;
+        border-radius: 8px;
+    }
+</style>

@@ -73,20 +73,6 @@
                 this.userLocation();
                 this.addPoints();
 
-                /*
-                userCircle.events.add('geometrychange', () => {
-                    if (selectedPlacemark) {
-                        const selectedObjects = window.ymaps.geoQuery([
-                            userCircle,
-                            selectedPlacemark
-                        ]);
-                        const objectsInsideCircle = selectedObjects.searchInside(userCircle);
-                        window.console.dir(objectsInsideCircle);
-                    }
-                });
-                */
-
-
 /* Зачатки выбора типа маршрута (авто, общественный, пеший)
                 autoRouteItem.events.add('click', function (e) { changeRoutingMode('auto', e.get('target')); });
                 masstransitRouteItem.events.add('click', function (e) { changeRoutingMode('masstransit', e.get('target')); });

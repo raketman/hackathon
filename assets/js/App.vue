@@ -58,7 +58,7 @@ export default {
 
         --bg-modal: #fff;
         --text-color: #5B6375;
-        --action-color: #296DE2;
+        --action-color: #7B1EF5;
         --bit-title-color: #343434;
 
         --color-danger: #FF612F;
@@ -99,12 +99,6 @@ export default {
         position: relative;
         background: #F8F8F8;
         justify-content: stretch;
-    }
-    .cover {
-        padding: 10px;
-        display: flex;
-        align-self: center;
-        flex-direction: column;
     }
 
     .row {
