@@ -32,7 +32,8 @@
                 version: '2.1',
             },
 
-            userCoodinates: null,
+            me: null,
+            map: null,
             selectedPlacemark: null, // this.$store.getters.SELECTED,
             points: [
                 [55.612360, 49.299670],
@@ -47,10 +48,10 @@
         }),
         methods: {
             initHandler(myMap) {
+                this.map = myMap;
                 this.hideCopyright();
-                this.userLocation(myMap);
-                let objects = this.addPoints(myMap);
-                this.onPointClick(myMap, objects);
+                this.userLocation();
+                this.addPoints();
 
                 /*
                 userCircle.events.add('geometrychange', () => {
@@ -85,30 +86,13 @@
                  }
 */
             },
-
             hideCopyright() {
                 //region Прячем копирайт Яндекса (нарушая лицензионное соглашение)
                 document.querySelector('.ymaps-2-1-74-copyrights-pane').style.display = 'none';
                 //endregion
             },
-
-            userLocation(myMap) {
+            userLocation() {
                 //region Вычесляем положение пользователя каждые 2 сек
-                window.ymaps.geolocation
-                    .get({
-                        autoReverseGeocode : false, // отключить обратное геокодирование (тарифицируется)
-                        mapStateAutoApply : true, // центруем и масштабируем автоматом
-                    })
-                    .then((result) => {
-                        // меняем иконку (я) на свою
-                        result.geoObjects.get(0).options.set(this.getUserPointStyle());
-                        myMap.geoObjects.add(result.geoObjects);
-                        // myMap.setCenter(userCoodinates, 16);
-
-                        this.userCoodinates = result.geoObjects.get(0).geometry.getCoordinates();
-                        // userCircle = new window.ymaps.Circle([userCoodinates, 10]);
-                    })
-                    .catch((err) => window.console.log('Ошибка: ' + err));
                 setInterval(() => {
                     window.ymaps.geolocation
                         .get({
@@ -117,74 +101,90 @@
                         })
                         .then((result) => {
                             const coords = result.geoObjects.get(0).geometry.getCoordinates();
-                            if (coords !== this.userCoodinates) {
-                                this.userCoodinates = coords;
+                            if (this.me) {
+                                if (coords !== this.me.get(0).geometry.getCoordinates()) {
+                                    this.me.get(0).geometry.setCoordinates(coords);
+                                }
+                            } else {
+                                // меняем иконку (я) на свою
+                                result.geoObjects.get(0).options.set(this.getUserPointStyle());
+                                this.me = result.geoObjects;
+                                this.map.geoObjects.add(this.me);
                             }
                         })
                         .catch((err) => window.console.log('Ошибка: ' + err));
                 }, 2000);
                 //endregion
             },
-
-            addPoints(myMap) {
-                /**
-                 * Создание собственного макета с помощью фабрики макетов.
-                 * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/templateLayoutFactory.xml
-                 */
-                const BalloonContentLayout = window.ymaps.templateLayoutFactory.createClass(
-                    `<div class="my-balloon">
-                        <a class="close" href="#">&times;</a>
-                        Расстояние: <i>{{ properties.distance.text }}</i>,
-                        <br />
-                        Время в пути: <i>{{ properties.duration.text }}</i>
-                    </div>`,
-                    {
-                        build: function () {
-                            this.constructor.superclass.build.call(this);
-                            /*
-                            this._$element = $('.my-balloon', this.getParentElement());
-                            this._$element.find('.close')
-                                .on('click', $.proxy(this.onCloseClick, this));
-                            */
-                        },
-                        onCloseClick: function (e) {
-                            e.preventDefault();
-                            this.events.fire('userclose');
-                        }
-                    }
-                );
-
+            addPoints() {
                 //region Пункт сбора
-                const pointStyle = {
-                    /**
-                     * Макет геообъекта.
-                     * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/GeoObject.xml#param-options
-                     */
-                    balloonContentLayout: BalloonContentLayout,
-                    // Отключаем режим панели для балуна.
-                    balloonPanelMaxMapArea: 0,
-                };
-                const myCollection = new window.ymaps.GeoObjectCollection({}, null, Object.assign(
-                    pointStyle,
-                    this.getPointStyle()
-                ));
-                this.points.forEach(coords => myCollection.add(new window.ymaps.Placemark(coords)));
-                const objects = window.ymaps.geoQuery(myCollection);
+                let route = null;
+                const myCollection = new window.ymaps.GeoObjectCollection();
+                this.points.forEach(coords => {
+                    const placemark = new window.ymaps.Placemark(coords, null,
+                        //this.getPointStyle()
+                        this.merge(this.getPointStyle(), this.getBaloonStyle())
+                    );
+                    placemark.events.add('click', (e) => {
+                        e.stopPropagation();
+                        if (this.selectedPlacemark) {
+                            return;
+                        }
 
-                // Найдем объекты, попадающие в видимую область и добавим на карту.
-                objects.searchInside(myMap).addToMap(myMap);
-                myMap.events.add('boundschange', () => {
-                    if (this.selectedPlacemark) {
-                        return;
-                    }
-                    const visibleObjects = objects.searchInside(myMap).addToMap(myMap);
-                    objects.remove(visibleObjects).removeFromMap(myMap);
+                        const toCoords = e.get('coords');
+                        const fromCoords = this.me.get(0).geometry.getCoordinates();
+                        this.selectedPlacemark = e.get('target');
+                        this.map.geoObjects.removeAll();
+
+                        const RouteModel = {
+                            referencePoints: [ fromCoords, toCoords ],
+                            params: this.merge(
+                                this.merge(
+                                    this.getPointStyle('wayPointFinishIcon'),
+                                    this.getUserPointStyle('wayPointStartIcon')
+                                ),
+                                {
+                                    results: 1, // Максимальное число маршрутов
+                                    routingMode: 'pedestrian', // Тип маршрутизации: auto|masstransit|pedestrian|bicycle
+                                    boundsAutoApply: true, //
+                                    reverseGeocoding: false, //
+
+                                    // Внешний вид линии маршрута.
+                                    routeStrokeWidth: 3,
+                                    routeStrokeColor: '#000088',
+                                    routeActiveStrokeWidth: 4,
+                                    routeActiveStrokeColor: '#809CFF',
+
+                                    // Внешний вид линии пешеходного маршрута.
+                                    routeActivePedestrianSegmentStrokeStyle: 'solid',
+                                    routeActivePedestrianSegmentStrokeColor: '#809CFF',
+                                }
+                            ),
+                        };
+                        window.console.dir(RouteModel);
+                        /**
+                         * Создание мультимаршрута.
+                         * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/multiRouter.MultiRoute.xml
+                         */
+                        route = new window.ymaps.multiRouter.MultiRoute(RouteModel);
+                        this.map.geoObjects.add(route);
+                    });
+                    myCollection.add(placemark);
                 });
-                //endregion
+                this.map.geoObjects.add(myCollection);
 
-                return objects;
+                this.onPointClick(myCollection);
             },
 
+            merge(object1, object2) {
+                const newObject = object1;
+                for (let item in object2) {
+                    if (object2.hasOwnProperty(item)) {
+                        newObject[item] = object2[item];
+                    }
+                }
+                return newObject;
+            },
             addPrefix(style, prefix = 'icon') {
                 const newStyle = {};
                 for (let item in style) {
@@ -194,74 +194,59 @@
                 }
                 return newStyle;
             },
-
-            getPointStyle(prefix = 'icon') {
-                // prefix = icon || wayPointFinish
-                return this.addPrefix({
-                    ImageSize : [ 20, 20 ],
-                    ImageOffset : [ -10, -10 ],
-                    Layout : 'default#image',
-                    ImageHref : '/img/map-to.svg',
-                }, prefix);
-            },
-
             getUserPointStyle(prefix = 'icon') {
-                // prefix = icon || wayPointStart
+                // prefix = icon || wayPointStartIcon
                 return this.addPrefix({
-                    ImageSize : [ 21, 31 ],
+                    ImageSize :   [ 21, 31 ],
                     ImageOffset : [ -10, -15 ],
-                    Layout : 'default#image',
-                    ImageHref : '/img/map-me.svg',
+                    Layout :      'default#image',
+                    ImageHref :   '/img/map-me.svg',
                 }, prefix);
             },
+            getPointStyle(prefix = 'icon') {
+                // prefix = icon || wayPointFinishIcon
+                return this.addPrefix({
+                    ImageSize :   [ 20, 20 ],
+                    ImageOffset : [ -10, -10 ],
+                    Layout :      'default#image',
+                    ImageHref :   '/img/map-to.svg',
+                }, prefix);
+            },
+            getBaloonStyle() {
+                /**
+                 * Создание собственного макета с помощью фабрики макетов.
+                 * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/templateLayoutFactory.xml
+                 */
 
-            onPointClick(myMap, objects) {
-                //region Выбор пункта сбора
-                let route = null;
-                objects.each(placemark => {
-                    placemark.events.add('click', (e) => {
-                        // e.stopPropagation();
-                        if (this.selectedPlacemark) {
-                            return;
-                        }
+                 const BalloonContentLayout = window.ymaps.templateLayoutFactory.createClass(
+                     `<div class="my-balloon">
+                         <a class="close" href="#">&times;</a>
+                         Расстояние: <i>{{ properties.distance.text }}</i>,
+                         <br />
+                         Время в пути: <i>{{ properties.duration.text }}</i>
+                     </div>`,
+                     {
+                         build: function () {
+                                 this.constructor.superclass.build.call(this);
+                                 // this._$element = $('.my-balloon', this.getParentElement());
+                                 // this._$element.find('.close').on('click', $.proxy(this.onCloseClick, this));
+                         },
+                         onCloseClick: function (e) {
+                             e.preventDefault();
+                             this.events.fire('userclose');
+                         }
+                     }
+                 );
 
-                        this.selectedPlacemark = e.get('target');
-                        objects.remove(this.selectedPlacemark).removeFromMap(myMap);
-
-                        const params = {
-                            results: 1, // Максимальное число маршрутов
-                            routingMode: 'pedestrian', // Тип маршрутизации: auto|masstransit|pedestrian|bicycle
-                            boundsAutoApply: true, //
-                            reverseGeocoding: false, //
-
-                            // Внешний вид линии маршрута.
-                            routeStrokeWidth: 4,
-                            routeStrokeColor: '#000088',
-                            routeActiveStrokeWidth: 4,
-                            routeActiveStrokeColor: '#809CFF',
-
-                            // Внешний вид линии пешеходного маршрута.
-                            routeActivePedestrianSegmentStrokeStyle: 'solid',
-                            routeActivePedestrianSegmentStrokeColor: '#809CFF',
-                        };
-                        const RouteModel = {
-                            referencePoints: [ this.userCoodinates, e.get('coords'), ],
-                            params: Object.assign(
-                                params,
-                                this.getPointStyle('wayPointFinish'),
-                                this.getUserPointStyle('wayPointStart')
-                            )
-                        };
-                        window.console.dir(RouteModel);
-                        /**
-                         * Создание мультимаршрута.
-                         * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/multiRouter.MultiRoute.xml
-                         */
-                        route = new window.ymaps.multiRouter.MultiRoute(RouteModel);
-                        myMap.geoObjects.add(route);
-                    });
-                });
-                //endregion
+                return {
+                    /**
+                     * Макет геообъекта.
+                     * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/GeoObject.xml#param-options
+                     */
+                     balloonContentLayout: BalloonContentLayout,
+                     // Отключаем режим панели для балуна.
+                     balloonPanelMaxMapArea: 0,
+                }
             },
         },
         mounted() {
