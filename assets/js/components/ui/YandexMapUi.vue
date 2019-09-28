@@ -1,6 +1,6 @@
 <template>
    <div class="">
-       <yandex-map class="map"
+       <yandex-map v-if="loadMap" class="map"
                    :settings="settings"
                    :controls="controls"
                    :coords="coords"
@@ -8,19 +8,25 @@
                    @map-was-initialized="initHandler"
        >
        </yandex-map>
-       <!--<div id="yandex-map-ui" class="map"></div>-->
+
+       <div style="bottom: 0px;position: absolute">
+         <neighbors-containers></neighbors-containers>
+       </div>
    </div>
 </template>
 
 <script>
     import { yandexMap } from 'vue-yandex-maps'
+    import NeighborsContainers from '../observers/NeighborsContainers';
 
     export default {
         name: 'YandexMapUi',
-        components: { yandexMap },
+        components: { yandexMap, NeighborsContainers },
         data: () => ({
+            loadMap: false,
             coords: [55.80, 49.10],
             controls: [
+                'zoomControl'
                 // 'geolocationControl', // мое местоположение
                 // 'trafficControl', // пробки
             ],
@@ -36,33 +42,47 @@
             map: null,
             route: null,
             selectedPlacemark: null, // this.$store.getters.SELECTED,
-            points: [
-                {
-                    coords: [55.612360, 49.299670],
-                },
-                {
-                    coords: [55.612138, 49.300547],
-                },
-                {
-                    coords: [55.612500, 49.297044],
-                },
-                {
-                    coords: [55.611354, 49.301347],
-                },
-                {
-                    coords: [55.609873, 49.297310],
-                },
-                {
-                    coords: [55.609825, 49.293998],
-                },
-                {
-                    coords: [55.610584, 49.291835],
-                },
-                {
-                    coords: [55.613922, 49.280004],
-                }
-            ],
+            points: []
+            // points: [
+            //     {
+            //         coords: [55.612360, 49.299670],
+            //     },
+            //     {
+            //         coords: [55.612138, 49.300547],
+            //     },
+            //     {
+            //         coords: [55.612500, 49.297044],
+            //     },
+            //     {
+            //         coords: [55.611354, 49.301347],
+            //     },
+            //     {
+            //         coords: [55.609873, 49.297310],
+            //     },
+            //     {
+            //         coords: [55.609825, 49.293998],
+            //     },
+            //     {
+            //         coords: [55.610584, 49.291835],
+            //     },
+            //     {
+            //         coords: [55.613922, 49.280004],
+            //     }
+            // ],
         }),
+        computed: {
+            getObjects() {
+                var points = [];
+                for(let key in this.$store.getters.OBJECTS) {
+                    var point = this.$store.getters.OBJECTS[key];
+
+                    point.coords = [point.values.latitude, point.values.longitude];
+
+                    points.push(point);
+                }
+                return points;
+            }
+        },
         methods: {
             initHandler(myMap) {
                 this.map = myMap;
@@ -163,7 +183,10 @@
             addPoints() {
                 //region Пункт сбора
                 const myCollection = new window.ymaps.GeoObjectCollection();
-                this.points.forEach(point => {
+                this.getObjects.forEach(point => {
+
+                    console.log(point);
+
                     const placemark = new window.ymaps.Placemark(point.coords, null,
                         //this.getPointStyle()
                         this.merge(this.getPointStyle(), this.getBaloonStyle())
@@ -179,6 +202,8 @@
                             e.get('coords'),
                         ];
                         this.selectedPlacemark = e.get('target');
+                        // Зафиксируем точку
+                        this.$store.commit('SET_TARGET', point);
                         this.map.geoObjects.removeAll();
                         this.createRoute(referencePoints);
                     });
@@ -301,11 +326,14 @@
             },
         },
         created() {
-            window.ymaps.geolocation.get({
-                autoReverseGeocode : false, // отключить обратное геокодирование (тарифицируется)
-            }).then(function (res) {
-                this.coords = res.geoObjects.get(0).geometry.getCoordinates();
-            });
+             window.ymaps.ready(() => {
+                 this.loadMap = true;
+            //     window.ymaps.geolocation.get({
+            //         autoReverseGeocode: false, // отключить обратное геокодирование (тарифицируется)
+            //     }).then(function (res) {
+            //         this.coords = res.geoObjects.get(0).geometry.getCoordinates();
+            //     });
+             });
         },
         mounted() {
         },
@@ -318,7 +346,7 @@
         left: 0;
         z-index: 0;
         width: 100%;
-        height: calc(100% - 64px);
+        height: calc(100% - 194px);
         position: absolute;
     }
 </style>

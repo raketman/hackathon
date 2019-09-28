@@ -10,7 +10,7 @@
         -->
 
 
-        <neighbors-containers></neighbors-containers>
+
     </div>
 </template>
 
