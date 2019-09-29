@@ -67,7 +67,7 @@
                 return value;
             },
             showWin() {
-                return this.bonusLimit < (this.getBonusValue + this.getNewBonusValue);
+                return !this.getCount;
             }
         },
         created() {
