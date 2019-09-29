@@ -38,7 +38,7 @@
             ButtonField,
         },
         data: () => ({
-            bonusLimit: 5700
+            bonusLimit: 4000
         }),
         computed: {
             getHeight() {
