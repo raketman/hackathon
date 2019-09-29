@@ -11,12 +11,13 @@ export default {
     getters: {
         BONUSES: (state) => {
             return state.bonuses.filter((item) => {
-                return !state.lastBonus || item.id < state.lastBonus;
+                return !state.lastBonus || parseInt(item.id) < parseInt(state.lastBonus);
             });
         },
         BONUSES_NEW: (state) => {
+            console.log('LAST BONUS: ' + state.lastBonus)
             return state.bonuses.filter((item) => {
-                return state.lastBonus && item.id >= state.lastBonus;
+                return state.lastBonus && parseInt(item.id) >= parseInt(state.lastBonus);
             });
         }
     },
