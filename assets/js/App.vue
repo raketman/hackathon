@@ -97,6 +97,7 @@ export default {
         width: 414px;
         display: flex;
         height: 100vh;
+        overflow: hidden;
         position: relative;
         background: #F8F8F8;
         justify-content: stretch;

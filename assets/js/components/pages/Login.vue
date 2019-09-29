@@ -1,6 +1,6 @@
 <template>
     <div class="row cover login-page">
-        <h2 class="login-title">Эко</h2>
+        <h2 class="login-title">ЭКО</h2>
         <form v-if="isPhone" action="/login" method="post" @submit.prevent="authorized">
             <phone-field v-model="login" name="phone" required />
             <button-field class="btn-action" title="Получить код" />

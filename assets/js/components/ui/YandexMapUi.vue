@@ -255,6 +255,9 @@
                     return;
                 }
 
+                const newHeight = document.documentElement.clientHeight - 64 - 192;
+                document.querySelector('.map-container').style.height = newHeight + 'px';
+
                 const referencePoints = [
                     placemark.coords,//this.me.get(0).geometry.getCoordinates(),
                     placemark.coords,
@@ -266,36 +269,31 @@
                 this.createRoute(referencePoints);
             },
             createRoute(referencePoints) {
-                const RouteModel = {
-                    referencePoints: referencePoints,
-                    params: this.merge(
-                        this.merge(
-                            this.getPointStyle('wayPointFinishIcon'),
-                            this.getUserPointStyle('wayPointStartIcon')
-                        ),
-                        {
-                            results: 1, // Максимальное число маршрутов
-                            routingMode: 'pedestrian', // Тип маршрутизации: auto|masstransit|pedestrian|bicycle
-                            boundsAutoApply: true, //
-                            reverseGeocoding: false, //
+                const RouteOptions = this.merge(
+                    this.merge(
+                        this.getPointStyle('wayPointFinishIcon'),
+                        this.getUserPointStyle('wayPointStartIcon')
+                    ), {
+                        boundsAutoApply: true, //
+                        reverseGeocoding: false, //
 
-                            // Внешний вид линии маршрута.
-                            routeStrokeWidth: 3,
-                            routeStrokeColor: '#000088',
-                            routeActiveStrokeWidth: 4,
-                            routeActiveStrokeColor: '#809CFF',
-
-                            // Внешний вид линии пешеходного маршрута.
-                            routeActivePedestrianSegmentStrokeStyle: 'solid',
-                            routeActivePedestrianSegmentStrokeColor: '#809CFF',
-                        }
-                    ),
-                };
+                        // Внешний вид линии пешеходного маршрута.
+                        routeActivePedestrianStrokeWidth: 4,
+                        routeActivePedestrianSegmentStrokeStyle: 'solid',
+                        routeActivePedestrianSegmentStrokeColor: '#809CFF',
+                    }
+                );
                 /**
                  * Создание мультимаршрута.
                  * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/multiRouter.MultiRoute.xml
                  */
-                this.route = new window.ymaps.multiRouter.MultiRoute(RouteModel);
+                this.route = new window.ymaps.multiRouter.MultiRoute({
+                    referencePoints : referencePoints,
+                    params : {
+                        results: 1, // Максимальное число маршрутов
+                        routingMode: 'pedestrian', // Тип маршрутизации: auto|masstransit|pedestrian|bicycle
+                    },
+                }, RouteOptions);
                 this.map.geoObjects.add(this.route);
                 /*
                 this.route.events.add('boundschange', () => {
@@ -399,7 +397,7 @@
 
 <style scoped>
     .map-wrp {
-        height: calc(100vh - 64px);
+        flex: auto;
     }
     .map-container {
         flex: auto;
