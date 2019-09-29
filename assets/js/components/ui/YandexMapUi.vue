@@ -137,7 +137,7 @@
 
                             moveCheck.then(() => {
                                 if (this.firstIndicator || !moveCheck.getLength()) {
-                                    //this.firstIndicator = false;
+                                    this.firstIndicator = false;
                                     window.console.log('Идем...');
                                     this.me.get(0).geometry.setCoordinates(coords);
 
@@ -432,6 +432,6 @@
     }
     .btn-map:before {
         margin: 0 5px 0 0;
-        content: url('./../../assets/plus.svg');
+        content: url('./img/plus.svg');
     }
 </style>
