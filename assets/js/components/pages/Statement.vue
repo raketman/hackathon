@@ -3,7 +3,10 @@
         <title-block title="Оставить заявку" :back="back" :showBack="showBack" />
 
         <div class="statement-wrap">
-            <div v-if="isSended" class="statement-success">Спасибо! Мы с вами свяжемся.</div>
+            <form v-if="isSended">
+                <div v-if="isSended" class="statement-success">Спасибо! Мы с вами свяжемся.</div>
+                <button-field class="btn-action" title="На главную" @click="back" />
+            </form>
 
             <form v-if="!isSended" action="/statement" method="post" @submit.prevent="load">
                 <text-field v-model="name" name="name" placeholder="Имя" required />

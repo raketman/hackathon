@@ -2,11 +2,18 @@
     <div class="row bonus-page">
         <div class="trash-container" v-if="!showWin">
             <div class="trash">
-                <div class="bonus-count" v-html="getBonusValue"></div>
-                <div v-html="getNewBonusValue"></div>
+                <div class="trash-empty"></div>
+                <div class="trash-full" v-bind:style="{height: getHeight}"></div>
+                <!--
+                <div class="bonus-count">
+                    <div v-html="getBonusValue"></div> бонусов
+                </div>
+                -->
             </div>
             <div class="trash-title">Все супер!</div>
-            <div class="trash-text">Выбросите мусор еще 5 раз<br/>и получите подарок</div>
+            <div class="trash-text">
+                Выбросите мусор еще <span v-html="getCount"></span> раз<br/>и получите подарок
+            </div>
 
             <button-field class="btn-action" @click="gotoStart" title="Закрыть" />
         </div>
@@ -31,9 +38,15 @@
             ButtonField,
         },
         data: () => ({
-            bonusLimit: 700
+            bonusLimit: 5700
         }),
         computed: {
+            getHeight() {
+                return (Math.ceil(((this.getNewBonusValue + this.getBonusValue) / this.bonusLimit) * 75) + 16) + 'px';
+            },
+            getCount() {
+                return Math.floor((this.bonusLimit - (this.getNewBonusValue + this.getBonusValue)) / 300);
+            },
             getObjects() {
                 return this.$store.getters.BONUSES_NEW;
             },
@@ -84,42 +97,24 @@
         position: relative;
         height: calc(100vh - 56px);
     }
-    .trash-container {
-        height: 220px;
-        margin: auto;
-    }
-    .trash {
-        width: 128px;
-        height: 128px;
-        position: relative;
-        background: url('./../../assets/trash-empty.svg') no-repeat 50% 50% / 80%;
-    }
-    .trash:before {
-        left: 0;
-        bottom: 0;
-        content: '';
-        width: 128px;
-        height: 78px;
-        display: flex;
-        position: absolute;
-        background: url('./../../assets/trash-full.svg') no-repeat 50% 50% / 80%;
-    }
-    .trash-title {
+    .trash-title,
+    .bonus-title {
         color: #0F1827;
-        margin: 12px 0;
         font-size: 24px;
         line-height: 28px;
         text-align: center;
     }
-    .trash-text {
+    .trash-text,
+    .bonus-text {
         opacity: .8;
+        margin: 12px 0;
         color: #0F1827;
         font-size: 14px;
-        max-width: 260px;
         line-height: 20px;
         text-align: center;
     }
-    .trash-container .btn {
+    .trash-container .btn,
+    .bonus-container .btn {
         left: 0;
         bottom: 0;
         position: absolute;
@@ -131,23 +126,43 @@
     .bonus-image {
         margin: auto;
         display: flex;
+        margin: 0 0 28px;
     }
-    .bonus-title {
-        color: #0F1827;
-        font-size: 24px;
-        line-height: 28px;
-        text-align: center;
-        margin: 28px 0 12px;
+
+    .trash-container {
+        height: 220px;
+        margin: auto;
     }
-    .bonus-text {
-        opacity: .8;
-        color: #0F1827;
-        font-size: 14px;
-        line-height: 20px;
-        text-align: center;
+    .trash {
+        z-index: 5;
+        width: 128px;
+        height: 128px;
+        display: flex;
+        position: relative;
+        margin: 0 auto 12px;
     }
-    .bonus-container .btn {
+    .trash-full,
+    .trash-empty {
+        left: 0;
+        right: 0;
         bottom: 0;
+        z-index: 3;
+        content: '';
+        display: flex;
         position: absolute;
+        background: url('./../../assets/trash-empty.svg') no-repeat 50% 100% / cover;
+    }
+    .trash-empty {
+        top: 0;
+    }
+    .trash-full {
+        z-index: 4;
+        background-image: url('./../../assets/trash-full.svg');
+    }
+    .trash .bonus-count {
+        color: #000;
+        margin: auto;
+        font-size: 16px;
+        text-align: center;
     }
 </style>
