@@ -157,6 +157,7 @@
     }
     .trash-full {
         z-index: 4;
+        transition: height 2s;
         background-image: url('./../../assets/trash-full.svg');
     }
     .trash .bonus-count {
