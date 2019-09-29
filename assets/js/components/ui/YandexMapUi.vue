@@ -114,7 +114,7 @@
             },
             userLocation() {
                 //region Вычесляем положение пользователя каждые 2 сек
-                var internal = setInterval(this.processMe, 2000);
+                var internal = setInterval(this.processMe, 500);
 
                 IntervalStore.save('map', internal);
                 //endregion
@@ -128,14 +128,16 @@
                     .then((result) => {
                         const coords = result.geoObjects.get(0).geometry.getCoordinates();
                         if (this.me) {
-                            const circle = new window.ymaps.Circle([coords, 30000], null, {visible: false});
+                            const circle = new window.ymaps.Circle([coords, 5], null, {visible: false});
+                            const circleObject = new window.ymaps.Circle([coords, 250], null, {visible: false});
                             this.map.geoObjects.add(circle);
+                            this.map.geoObjects.add(circleObject);
                             const objects = window.ymaps.geoQuery(this.me);
                             const moveCheck = objects.searchInside(circle);
 
                             moveCheck.then(() => {
                                 if (this.firstIndicator || !moveCheck.getLength()) {
-                                    this.firstIndicator = false;
+                                    //this.firstIndicator = false;
                                     window.console.log('Идем...');
                                     this.me.get(0).geometry.setCoordinates(coords);
 
@@ -146,7 +148,7 @@
                                         ]);
 
                                         const objects = window.ymaps.geoQuery(this.selectedPlacemark);
-                                        const objectsInsideCircle = objects.searchInside(circle);
+                                        const objectsInsideCircle = objects.searchInside(circleObject);
                                         objectsInsideCircle.then(() => {
                                             if (objectsInsideCircle.getLength()) {
                                                 window.console.log('Дошли!');
