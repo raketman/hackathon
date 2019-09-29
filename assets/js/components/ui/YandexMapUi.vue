@@ -113,7 +113,7 @@
                 //endregion
             },
             userLocation() {
-                //region Вычесляем положение пользователя каждые 2 сек
+                //region Вычесляем положение пользователя каждые 0.5 сек
                 var internal = setInterval(this.processMe, 500);
 
                 IntervalStore.save('map', internal);
@@ -128,7 +128,7 @@
                     .then((result) => {
                         const coords = result.geoObjects.get(0).geometry.getCoordinates();
                         if (this.me) {
-                            const circle = new window.ymaps.Circle([coords, 5], null, {visible: false});
+                            const circle = new window.ymaps.Circle([coords, 2], null, {visible: false});
                             const circleObject = new window.ymaps.Circle([coords, 250], null, {visible: false});
                             this.map.geoObjects.add(circle);
                             this.map.geoObjects.add(circleObject);
