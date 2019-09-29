@@ -38,7 +38,7 @@
             ButtonField,
         },
         data: () => ({
-            bonusLimit: 4000
+            bonusLimit: 2000
         }),
         computed: {
             getHeight() {
@@ -67,7 +67,7 @@
                 return value;
             },
             showWin() {
-                return !this.getCount;
+                return 0 >= this.getCount;
             }
         },
         created() {

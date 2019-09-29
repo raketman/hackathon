@@ -14,6 +14,7 @@
         <div class="point-address" v-html="getAddress"></div>
 
         <button-field :class="{'btn-action': isActive}" v-if="!processing" @click="start" title="Сдать мусор" />
+        <div v-if="processing" class="loader"></div>
     </div>
 </template>
 
@@ -121,7 +122,7 @@
                     setTimeout(() => {
                         // Подтверждим выбор
                         this.close();
-                    }, 5000);
+                    }, 3000);
                 }
             },
             stop() {
@@ -188,5 +189,11 @@
     }
     .neighbors .point-address {
         margin: 12px 0 15px;
+    }
+    .neighbors .loader {
+        width: 38px;
+        height: 38px;
+        margin: auto;
+        background: url('./../../assets/loader.gif') no-repeat 50% 50% / cover;
     }
 </style>
