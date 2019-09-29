@@ -432,6 +432,6 @@
     }
     .btn-map:before {
         margin: 0 5px 0 0;
-        content: url('./img/plus.svg');
+        content: url('./../../assets/plus.svg');
     }
 </style>
